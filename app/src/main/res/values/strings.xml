@@ -1,0 +1,56 @@
+<resources>
+    <string name="app_name" translatable="false">Contact Manager</string>
+    <string name="button">Camera</string>
+    <string name="add_button">Add</string>
+    <string name="hint1">Name</string>
+    <string name="hint2">Phone Number</string>
+    <string name="image_path1">Image Path: %1$s</string>
+    <string name="image_path2">Image Path: null</string>
+    <string name="add_activity_button">Add Contact</string>
+    <string name="id">Cryptographic Id</string>
+    <string name="delete">Delete</string>
+    <string name="edit">Edit</string>
+    <string name="picture">picture</string>
+    <string name="id2">Cryptographic Id: %1$s</string>
+    <string name="name">Name: %1$s</string>
+    <string name="phone">Phone: %1$s</string>
+    <string name="search">Search</string>
+    <string name="nfc_search">NFC Search</string>
+    <string name="nfc" translatable="false">NFC</string>
+    <string name="update">Update</string>
+    <string name="sort">Sort by:</string>
+    <string name="search_hint">Search name or phone number</string>
+    <string name="required">Required</string>
+    <string name="recents">Recently Added</string>
+    <string name="just_phone">Phone</string>
+    <string name="NFC_warning">Feature is currently unavailable</string>
+    <string name="name_warning">Name must be longer</string>
+    <string name="name_warning2">Please enter valid name</string>
+    <string name="phone_warning">Phone number must be 10 digits</string>
+    <string name="phone_warning2">Please enter valid phone number</string>
+    <string name="input_warning">Please enter a valid name and/or phone number</string>
+    <string name="image_warning">Please capture an image</string>
+    <string name="add_success">Successfully added contact</string>
+    <string name="edit_success">Successfully updated contact</string>
+    <string name="delete_success">Successfully Deleted</string>
+    <string name="delete_fail">There was a problem deleting the image</string>
+    <string name="nfc2" translatable="false">NFC:</string>
+    <string name="read">Read</string>
+    <string name="write">Write</string>
+    <string name="no_nfc">This device does not support NFC</string>
+    <string name="status1">Scan a Tag</string>
+    <string name="id3">Cryptographic Id: %1$s</string>
+    <string name="nfc_image">NFC Image</string>
+    <string name="mode1">Write Mode</string>
+    <string name="mode0">Read Mode</string>
+    <string name="go_to">Go To Contact Page</string>
+    <string name="empty">null</string>
+    <string name="error1">ERROR: Tag is Empty</string>
+    <string name="error2">ERROR: Not an Id</string>
+    <string name="success">Success</string>
+    <string name="error3">ERROR: Id Not Found</string>
+    <string name="tagFound">Tag Found</string>
+    <string name="error0">ERROR</string>
+    <string name="write_success">Write Successful</string>
+    <string name="contactChooser">Select a Contact</string>
+</resources>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="button">Камера</string>
+    <string name="add_button">Добавить</string>
+    <string name="hint1">Имя</string>
+    <string name="hint2">Телефонный Номер</string>
+    <string name="image_path1">Путь Картинки: %1$s</string>
+    <string name="image_path2">Путь Картинки: пуст</string>
+    <string name="add_activity_button">Добавить Контакт</string>
+    <string name="id">Криптографический Идентификатор</string>
+    <string name="delete">Удалить</string>
+    <string name="edit">Редактировать</string>
+    <string name="picture">Картинкa</string>
+    <string name="id2">Криптографический Идентификатор: %1$s</string>
+    <string name="name">Имя: %1$s</string>
+    <string name="phone">Телефон: %1$s</string>
+    <string name="nfc_search">Поиск по NFC</string>
+    <string name="update">Обновить</string>
+    <string name="sort">Сортировать по:</string>
+    <string name="just_phone">Телефон</string>
+    <string name="required">Oбязательно</string>
+    <string name="recents">Недавно добавленны</string>
+    <string name="name_warning">Имя должно быть длиннее</string>
+    <string name="delete_success">Успешно Yдалено</string>
+    <string name="add_success">Контакт был успешно добавлен</string>
+    <string name="edit_success">Контакт был успешно отредактирован</string>
+    <string name="search_hint">Поиск по имени или номеру телефона</string>
+    <string name="search">Поиск</string>
+    <string name="NFC_warning">Функция временно недоступна</string>
+    <string name="name_warning2">Введите имя правильно</string>
+    <string name="phone_warning">Телефонный номер должен состоять из 10 цифр</string>
+    <string name="phone_warning2">Введите телефонный номер правильно</string>
+    <string name="input_warning">Введите имя и/или телефонный номер правильно</string>
+    <string name="image_warning">Пожалуйста снимите картинку</string>
+    <string name="delete_fail">Не удалось удалить картинку</string>
+</resources>
