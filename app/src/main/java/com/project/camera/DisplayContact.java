@@ -47,7 +47,7 @@ public class DisplayContact extends AppCompatActivity {
         TextView textViewId = findViewById(R.id.id);
         ImageView picture = findViewById(R.id.imageView);
 
-        Cursor person = mydb.getRow(id);
+        Cursor person = mydb.getPersonRow(id);
         person.moveToFirst();
 
         imagePath = person.getString(4);
@@ -86,7 +86,7 @@ public class DisplayContact extends AppCompatActivity {
     }
 
     public void delete(View view) {
-        mydb.delete(id);
+        mydb.deletePerson(id);
         File picture = new File(imagePath);
         Context context = getApplicationContext();
         int duration = Toast.LENGTH_SHORT;

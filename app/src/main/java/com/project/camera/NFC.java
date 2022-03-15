@@ -36,10 +36,10 @@ public class NFC extends AppCompatActivity {
     private Button button;
     private String writeId;
     private int contactId;
-    Tag nfcTag;
-    PendingIntent pendingIntent;
-    IntentFilter[] writeTagFilters;
-    NfcAdapter nfcAdapter;
+    private Tag nfcTag;
+    private PendingIntent pendingIntent;
+    private IntentFilter[] writeTagFilters;
+    private NfcAdapter nfcAdapter;
     TextWatcher watcher = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -143,7 +143,7 @@ public class NFC extends AppCompatActivity {
         }
         try {
             int readId = Integer.parseInt(text);
-            contactId = db.nfcSearch(readId);
+            contactId = db.nfcSearch(readId, false); //TODO depend on setting
             if (contactId == -1){
                 crypto_id.setText(getString(R.string.id3, getString(R.string.empty)));
                 status.setText(R.string.error3);

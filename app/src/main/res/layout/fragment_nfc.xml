@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center_horizontal"
@@ -14,18 +15,20 @@
         android:textColor="@android:color/black"
         android:textSize="25sp" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:layout_margin="10dp"
         android:id="@+id/read"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/read" />
+        android:text="@string/read"
+        app:drawableLeftCompat="@android:drawable/stat_sys_upload"/>
 
-    <Button
-        android:layout_margin="10dp"
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/write"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/write" />
+        android:layout_margin="10dp"
+        android:text="@string/write"
+        app:drawableLeftCompat="@android:drawable/stat_sys_download" />
 
 </LinearLayout>

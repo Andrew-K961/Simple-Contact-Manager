@@ -13,6 +13,7 @@ import android.text.TextWatcher;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -102,6 +103,8 @@ public class AddPerson extends AppCompatActivity {
         assert actionBar != null;
         actionBar.setDisplayHomeAsUpEnabled(true);
 
+        findViewById(R.id.cameraButton).setOnClickListener(this::dispatchTakePictureIntent);
+
         database = new DBHelper(this);
         nameEditText = findViewById(R.id.editTextPersonName);
         nameLayout = findViewById(R.id.editTextNameLayout);
@@ -141,12 +144,11 @@ public class AddPerson extends AppCompatActivity {
             } else {
                 SecureRandom random = new SecureRandom();
                 int cryptoId = random.nextInt();
-                while (database.checkForCollision(cryptoId) || cryptoId == -1) {
+                while (database.checkForCollision(cryptoId, false) || cryptoId == -1) {
                     cryptoId = random.nextInt();
                 }
-                if (database.insert(cryptoId, name, phone, currentPhotoPath)) {
-                    CharSequence text = getResources().getString(R.string.add_success);
-                    Toast toast = Toast.makeText(context, text, duration);
+                if (database.insertPerson(cryptoId, name, phone, currentPhotoPath)) {
+                    Toast toast = Toast.makeText(context, R.string.add_success, duration);
                     toast.show();
                 }
                 finish();
@@ -183,7 +185,7 @@ public class AddPerson extends AppCompatActivity {
                     File oldImage = new File(currentImage);
                     oldImage.delete();
                 }
-                if (database.update(extras.getInt("id"), name, phone, currentPhotoPath)) {
+                if (database.updatePerson(extras.getInt("id"), name, phone, currentPhotoPath)) {
                     Toast toast = Toast.makeText(context, R.string.edit_success, duration);
                     toast.show();
                 }
