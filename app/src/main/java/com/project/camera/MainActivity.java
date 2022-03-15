@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -69,14 +71,14 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
 
         database = new DBHelper(this);
         listViewArray = database.getAll();
-        arrayAdapter=new ArrayAdapter<>(this,android.R.layout.simple_list_item_1, listViewArray);
+        arrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, listViewArray);
 
         listView = findViewById(R.id.listView);
         listView.setAdapter(arrayAdapter);
         listView.setOnItemClickListener((arg0, arg1, arg2, arg3) -> {
             Person person = arrayAdapter.getItem(arg2);
             int id_To_Search = person.getId();
-            Intent intent = new Intent(getApplicationContext(),DisplayContact.class);
+            Intent intent = new Intent(getApplicationContext(), DisplayContact.class);
 
             intent.putExtra("id", id_To_Search);
             startActivity(intent);
@@ -92,12 +94,12 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
     @Override
     protected void onStop() {
         super.onStop();
-        searchView.setQuery("",false);
+        searchView.setQuery("", false);
         searchView.clearFocus();
         searchView.setVisibility(View.GONE);
     }
 
-    public void onClick(View view){
+    public void onClick(View view) {
         Intent intent = new Intent(getApplicationContext(), AddPerson.class);
         Bundle data = new Bundle();
         data.putString("Activity_Origin", "MainActivity");
@@ -107,7 +109,7 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
 
     public void searchButton(View view) {
         if (searchState) {
-            searchView.setQuery("",false);
+            searchView.setQuery("", false);
             searchView.clearFocus();
             searchView.setVisibility(View.GONE);
             searchState = false;
@@ -123,7 +125,7 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
 
     public void NFC(View view) {
         PackageManager manager = getApplicationContext().getPackageManager();
-        if(manager.hasSystemFeature(PackageManager.FEATURE_NFC)) {
+        if (manager.hasSystemFeature(PackageManager.FEATURE_NFC)) {
             NFCFragment bottomSheet = new NFCFragment();
             bottomSheet.show(getSupportFragmentManager(),
                     "ModalBottomSheet");
@@ -139,10 +141,10 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
         String recents = getResources().getString(R.string.recents);
         String name = getResources().getString(R.string.hint1);
 
-        if(selected.equals(recents)){
+        if (selected.equals(recents)) {
             Collections.sort(listViewArray, Person.IdSort);
             arrayAdapter.notifyDataSetChanged();
-        } else if (selected.equals(name)){
+        } else if (selected.equals(name)) {
             Collections.sort(listViewArray, Person.NameSort);
             arrayAdapter.notifyDataSetChanged();
         } else {
@@ -167,7 +169,7 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
     @Override
     public boolean onQueryTextChange(@NonNull String newText) {
         listViewArray.clear();
-        if(newText.length() >= 1) {
+        if (newText.length() >= 1) {
             listViewArray.addAll(database.search(newText));
         } else {
             listViewArray.addAll(database.getAll());
@@ -175,5 +177,19 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
         //listView.setAdapter(arrayAdapter);
         arrayAdapter.notifyDataSetChanged();
         return false;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.settings_button, menu);
+        // first parameter is the file for icon and second one is menu
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        Intent intent = new Intent(getApplicationContext(), Settings.class);
+        startActivity(intent);
+        return super.onOptionsItemSelected(item);
     }
 }

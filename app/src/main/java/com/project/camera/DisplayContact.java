@@ -17,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.exifinterface.media.ExifInterface;
 
 import java.io.File;
+import java.util.Objects;
 
 public class DisplayContact extends AppCompatActivity {
 
@@ -45,20 +46,29 @@ public class DisplayContact extends AppCompatActivity {
         TextView textViewPhone = findViewById(R.id.phone);
         TextView textViewId = findViewById(R.id.id);
         ImageView picture = findViewById(R.id.imageView);
+
         Cursor person = mydb.getRow(id);
         person.moveToFirst();
+
         imagePath = person.getString(4);
         Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
+
         String name = getString(R.string.name, person.getString(2));
         String formattedPhone = person.getString(3).replaceFirst("(\\d{3})(\\d{3})(\\d+)", "($1) $2-$3");
         String phone = getString(R.string.phone, formattedPhone);
         String crypto_id = getString(R.string.id2, person.getString(1));
+
         rawName = person.getString(2);
         rawPhone = person.getString(3);
+
         person.close();
+
+        Objects.requireNonNull(getSupportActionBar()).setTitle(rawName);
+
         textViewName.setText(name);
         textViewPhone.setText(phone);
         textViewId.setText(crypto_id);
+
         try {
             ExifInterface ei = new ExifInterface(imagePath);
             if (ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)

@@ -1,0 +1,12 @@
+<resources>
+    <!-- Reply Preference -->
+    <string-array name="modes">
+        <item>@string/mode_contacts</item>
+        <item>@string/mode_inventory</item>
+    </string-array>
+
+    <string-array name="mode_values">
+        <item>mode1</item>
+        <item>mode2</item>
+    </string-array>
+</resources>

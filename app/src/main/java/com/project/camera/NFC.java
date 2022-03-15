@@ -25,6 +25,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.Objects;
 
 public class NFC extends AppCompatActivity {
 
@@ -84,6 +85,7 @@ public class NFC extends AppCompatActivity {
         button.setVisibility(View.INVISIBLE);
 
         status.addTextChangedListener(watcher);
+        Objects.requireNonNull(getSupportActionBar()).setTitle(R.string.nfc);
 
         nfcAdapter = NfcAdapter.getDefaultAdapter(this);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){

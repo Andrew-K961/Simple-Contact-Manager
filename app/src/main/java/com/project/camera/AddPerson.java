@@ -117,8 +117,10 @@ public class AddPerson extends AppCompatActivity {
 
         assert originActivity != null;
         if (originActivity.equals("MainActivity")) {
+            actionBar.setTitle(R.string.add_activity_button);
             addSetup();
         } else if(originActivity.equals("Edit")) {
+            actionBar.setTitle(R.string.edit);
             editSetup();
         }
     }
