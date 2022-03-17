@@ -4,48 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".AddPerson">
-
-    <!--<EditText
-        android:id="@+id/editTextPersonName"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="56dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginBottom="34dp"
-        android:autofillHints="Name"
-        android:ems="10"
-        android:hint="@string/hint1"
-        android:inputType="textPersonName"
-        app:layout_constraintBottom_toTopOf="@+id/editTextPhone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" /> -->
-
-    <!-- <EditText
-        android:id="@+id/editTextPhone"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="7dp"
-        android:layout_marginLeft="7dp"
-        android:layout_marginEnd="7dp"
-        android:layout_marginRight="7dp"
-        android:layout_marginBottom="65dp"
-        android:autofillHints="Phone Number"
-        android:ems="10"
-        android:hint="@string/hint2"
-        android:inputType="phone"
-        app:layout_constraintBottom_toTopOf="@+id/imageButton2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextNameLayout"
-        tools:ignore="TextContrastCheck" /> -->
+    tools:context=".AddItem">
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/addItem"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/add_button"
@@ -56,33 +18,33 @@
         app:layout_constraintVertical_bias="0.94" />
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/imagePath"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="@string/image_path2"
         android:textSize="16sp"
-        app:layout_constraintBottom_toTopOf="@+id/button"
-        app:layout_constraintEnd_toStartOf="@+id/cameraButton"
+        app:layout_constraintBottom_toTopOf="@+id/addItem"
+        app:layout_constraintEnd_toStartOf="@+id/takePicture"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.65" />
 
     <ImageButton
-        android:id="@+id/cameraButton"
+        android:id="@+id/takePicture"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:contentDescription="@string/button"
-        app:layout_constraintBottom_toBottomOf="@+id/textView"
+        app:layout_constraintBottom_toBottomOf="@+id/imagePath"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/textView"
-        app:layout_constraintTop_toTopOf="@+id/textView"
+        app:layout_constraintStart_toEndOf="@+id/imagePath"
+        app:layout_constraintTop_toTopOf="@+id/imagePath"
         app:srcCompat="@android:drawable/ic_menu_camera"
         tools:ignore="ImageContrastCheck,ImageContrastCheck" />
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/editTextNameLayout"
+        android:id="@+id/nameLayout"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="0dp"
         android:layout_height="104dp"
@@ -95,7 +57,7 @@
         app:counterEnabled="true"
         app:counterMaxLength="31"
         app:errorEnabled="true"
-        app:layout_constraintBottom_toTopOf="@+id/editTextPhoneLayout"
+        app:layout_constraintBottom_toTopOf="@+id/descLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
@@ -103,16 +65,15 @@
         app:placeholderText="@string/required">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/nameEditText"
+            android:id="@+id/nameEditText2"
             android:layout_width="match_parent"
             android:layout_height="65dp"
-            android:autofillHints="Name"
             android:hint="@string/hint1"
             tools:ignore="TextContrastCheck" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/editTextPhoneLayout"
+        android:id="@+id/descLayout"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="0dp"
         android:layout_height="104dp"
@@ -122,22 +83,21 @@
         android:layout_marginRight="8dp"
         android:ems="10"
         app:counterEnabled="true"
-        app:counterMaxLength="10"
-        app:layout_constraintBottom_toTopOf="@+id/textView"
+        app:counterMaxLength="400"
+        app:layout_constraintBottom_toTopOf="@+id/imagePath"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextNameLayout"
+        app:layout_constraintTop_toBottomOf="@+id/nameLayout"
         app:placeholderText="@string/required"
         tools:ignore="TextContrastCheck">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/editTextPhone"
+            android:id="@+id/descEditText"
             android:layout_width="match_parent"
             android:layout_height="66dp"
-            android:autofillHints="Phone Number"
-            android:hint="@string/hint2"
-            android:inputType="phone"
+            android:hint="@string/hint3"
+            android:inputType="textMultiLine"
             tools:ignore="TouchTargetSizeCheck,TextContrastCheck" />
     </com.google.android.material.textfield.TextInputLayout>
 

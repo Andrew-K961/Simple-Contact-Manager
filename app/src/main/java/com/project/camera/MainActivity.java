@@ -95,6 +95,7 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
 
             itemArrayList = database.getAllItems();
             itemArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, itemArrayList);
+            listView.setAdapter(itemArrayAdapter);
         } else {
             adapter = ArrayAdapter.createFromResource(this,
                     R.array.sort_array1, android.R.layout.simple_spinner_item);
@@ -142,10 +143,13 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
     }
 
     public void addButton(View view) {
-        Intent intent = new Intent(getApplicationContext(), AddPerson.class);
-       // Bundle data = new Bundle();
+        Intent intent;
+        if (mode.equals("mode1")){
+            intent = new Intent(getApplicationContext(), AddPerson.class);
+        } else {
+            intent = new Intent(getApplicationContext(), AddItem.class);
+        }
         intent.putExtra("Activity_Origin", "MainActivity");
-       // intent.putExtras(data);
         startActivity(intent);
     }
 
@@ -224,7 +228,6 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
                 personArrayList.addAll(database.getAllPeople());
             }
             personArrayAdapter.notifyDataSetChanged();
-            return false;
         } else {
             itemArrayList.clear();
             if (newText.length() >= 1) {
@@ -233,8 +236,8 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
                 itemArrayList.addAll(database.getAllItems());
             }
             itemArrayAdapter.notifyDataSetChanged();
-            return false;
         }
+        return false;
     }
 
     @Override

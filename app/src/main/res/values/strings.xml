@@ -63,6 +63,12 @@
     <string name="inventory">Inventory Manager</string>
     <string name="add_item">Add Item</string>
     <string name="inventory_search">Search by name</string>
+    <string name="hint3">Description</string>
+    <string name="input_warning2">Please enter a valid name and/or description</string>
+    <string name="add_success2">Successfully Added Item</string>
+    <string name="desc_warning">Description must be longer</string>
+    <string name="desc_warning2">Description must be shorter</string>
+    <string name="edit_success2">Successfully updated item</string>
 
     <!-- Unneeded template stuff
     <string name="signature_title">Your signature</string>

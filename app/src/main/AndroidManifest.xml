@@ -23,7 +23,6 @@
         android:supportsRtl="false"
         android:theme="@style/Theme.MaterialComponents.Light.DarkActionBar.Bridge">
 
-
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.example.android.fileprovider"
@@ -40,6 +39,9 @@
             android:label="@string/title_activity_settings"
             android:parentActivityName=".MainActivity"
             android:screenOrientation="nosensor">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
         </activity>
         <activity
             android:name=".ContactChooser"
@@ -57,9 +59,7 @@
             android:screenOrientation="nosensor">
             <intent-filter>
                 <action android:name="android.nfc.action.NDEF_DISCOVERED" />
-
                 <category android:name="android.intent.category.DEFAULT" />
-
                 <data android:mimeType="text/plain" />
             </intent-filter>
 
@@ -82,13 +82,15 @@
             android:name=".AddPerson"
             android:screenOrientation="nosensor" />
         <activity
+            android:name=".AddItem"
+            android:screenOrientation="nosensor" />
+        <activity
             android:name=".MainActivity"
             android:exported="true"
             android:screenOrientation="nosensor"
             android:windowSoftInputMode="adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 

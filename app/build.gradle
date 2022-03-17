@@ -7,11 +7,11 @@ android {
         applicationId "com.project.camera"
         minSdkVersion 16
         targetSdkVersion 31
-        versionCode 6
-        versionName '0.9'
+        versionCode 7
+        versionName '1.0'
         android.defaultConfig.vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        versionNameSuffix 'beta'
+        versionNameSuffix 'release'
     }
 
     buildTypes {
