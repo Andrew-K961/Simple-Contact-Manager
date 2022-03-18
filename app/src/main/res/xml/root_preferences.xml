@@ -18,6 +18,7 @@
         <SwitchPreferenceCompat
             app:key="photo_required"
             app:title="@string/require_photo"
+            app:summary="Doesn't work yet"
             app:defaultValue="true"/>
 
     </PreferenceCategory>

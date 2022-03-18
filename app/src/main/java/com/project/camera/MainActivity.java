@@ -114,14 +114,13 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
 //************** List
 
         listView.setOnItemClickListener((arg0, arg1, arg2, arg3) -> {
-            Intent intent;
+            Intent intent = new Intent(getApplicationContext(), Display.class);
             if (mode.equals("mode1")) {
                 Person person = personArrayAdapter.getItem(arg2);
-                intent = new Intent(getApplicationContext(), DisplayContact.class);
+                intent = new Intent(getApplicationContext(), Display.class);
                 intent.putExtra("id", person.getId());
             } else {
                 Item item = itemArrayAdapter.getItem(arg2);
-                intent = new Intent(getApplicationContext(), DisplayContact.class); //TODO change to display item
                 intent.putExtra("id", item.getId());
             }
             startActivity(intent);

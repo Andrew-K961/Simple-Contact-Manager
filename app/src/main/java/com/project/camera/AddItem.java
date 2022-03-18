@@ -79,12 +79,12 @@ public class AddItem extends AppCompatActivity {
         public void onTextChanged(CharSequence s, int start, int before, int count) {
             if(s.length() == 0 || s.length() == 1) {
                 String descWarning = getString(R.string.desc_warning);
-                nameLayout.setError(descWarning);
+                descLayout.setError(descWarning);
             } else if(validate(s.toString(), false)) {
                 String descWarning = getString(R.string.desc_warning2);
-                nameLayout.setError(descWarning);
+                descLayout.setError(descWarning);
             } else {
-                nameLayout.setError(null);
+                descLayout.setError(null);
             }
         }
         @Override
@@ -115,6 +115,7 @@ public class AddItem extends AppCompatActivity {
         String originActivity = extras.getString("Activity_Origin");
 
         nameEditText.addTextChangedListener(nameWatcher);
+        descEditText.addTextChangedListener(descWatcher);
 
         if (originActivity.equals("MainActivity")) {
             actionBar.setTitle(R.string.add_item);
@@ -132,7 +133,7 @@ public class AddItem extends AppCompatActivity {
             String name = Objects.requireNonNull(nameEditText.getText()).toString();
             String desc = Objects.requireNonNull(descEditText.getText()).toString();
 
-            if (validate(name, true) || validate(desc, false)) {
+            if (validate(name, true) || validate(desc, false) || desc.length() < 2) {
                 Toast toast = Toast.makeText(context, R.string.input_warning2, duration);
                 toast.show();
             } else if (currentPhotoPath == null) {
