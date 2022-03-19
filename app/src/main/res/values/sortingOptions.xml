@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="sort_array">
+    <string-array name="sort_array1">
         <item>@string/recents</item>
         <item>@string/hint1</item>
         <item>@string/just_phone</item>
+    </string-array>
+    <string-array name="sort_array2">
+        <item>@string/recents</item>
+        <item>@string/hint1</item>
     </string-array>
 </resources>

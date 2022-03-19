@@ -324,7 +324,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="jar:file:/C:/Program%20Files/Android/Android%20Studio/plugins/android/lib/android.jar!/images/material/icons/materialicons/nfc/baseline_nfc_24.xml" />
+                                      <entry key="url" value="jar:file:/D:/Android%20Studio/plugins/android/lib/android.jar!/images/material/icons/materialicons/settings/baseline_settings_24.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -334,7 +334,8 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="outputName" value="ic_baseline_nfc_24" />
+                            <entry key="color" value="6c6c6c" />
+                            <entry key="outputName" value="ic_baseline_settings_24" />
                             <entry key="sourceFile" value="C:\Users\ik\AndroidStudioProjects\Camera" />
                           </map>
                         </option>

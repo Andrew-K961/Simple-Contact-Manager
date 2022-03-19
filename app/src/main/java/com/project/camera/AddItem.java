@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.Editable;
-import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.MenuItem;
 import android.view.View;
@@ -34,7 +33,7 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class AddPerson extends AppCompatActivity {
+public class AddItem extends AppCompatActivity {
 
     private DBHelper database;
     private File photoFile = null;
@@ -43,8 +42,8 @@ public class AddPerson extends AppCompatActivity {
     private TextView imagePath;
     private TextInputEditText nameEditText;
     private TextInputLayout nameLayout;
-    private TextInputEditText phoneEditText;
-    private TextInputLayout phoneLayout;
+    private TextInputEditText descEditText;
+    private TextInputLayout descLayout;
     private Button addButton;
     private Bundle extras;
 
@@ -70,21 +69,22 @@ public class AddPerson extends AppCompatActivity {
             //nothing
         }
     };
-    TextWatcher phoneWatcher = new TextWatcher() {
+
+    TextWatcher descWatcher = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             //nothing
         }
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            if(s.length() != 10) {
-                String phoneWarning = getResources().getString(R.string.phone_warning);
-                phoneLayout.setError(phoneWarning);
-            } else if(!TextUtils.isDigitsOnly(s)) {
-                String phoneWarning = getResources().getString(R.string.phone_warning2);
-                phoneLayout.setError(phoneWarning);
+            if(s.length() == 0 || s.length() == 1) {
+                String descWarning = getString(R.string.desc_warning);
+                descLayout.setError(descWarning);
+            } else if(validate(s.toString(), false)) {
+                String descWarning = getString(R.string.desc_warning2);
+                descLayout.setError(descWarning);
             } else {
-                phoneLayout.setError(null);
+                descLayout.setError(null);
             }
         }
         @Override
@@ -96,30 +96,29 @@ public class AddPerson extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_person);
+        setContentView(R.layout.activity_add_item);
 
         ActionBar actionBar = getSupportActionBar();
         assert actionBar != null;
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-        findViewById(R.id.cameraButton).setOnClickListener(this::dispatchTakePictureIntent);
+        findViewById(R.id.takePicture).setOnClickListener(this::dispatchTakePictureIntent);
 
         database = new DBHelper(this);
-        nameEditText = findViewById(R.id.nameEditText);
-        nameLayout = findViewById(R.id.editTextNameLayout);
-        phoneEditText = findViewById(R.id.editTextPhone);
-        phoneLayout = findViewById(R.id.editTextPhoneLayout);
-        imagePath = findViewById(R.id.textView);
-        addButton = findViewById(R.id.button);
+        nameEditText = findViewById(R.id.nameEditText2);
+        nameLayout = findViewById(R.id.nameLayout);
+        descEditText = findViewById(R.id.descEditText);
+        descLayout = findViewById(R.id.descLayout);
+        imagePath = findViewById(R.id.imagePath);
+        addButton = findViewById(R.id.addItem);
         extras = getIntent().getExtras();
         String originActivity = extras.getString("Activity_Origin");
 
-        phoneEditText.addTextChangedListener(phoneWatcher);
         nameEditText.addTextChangedListener(nameWatcher);
+        descEditText.addTextChangedListener(descWatcher);
 
-        assert originActivity != null;
         if (originActivity.equals("MainActivity")) {
-            actionBar.setTitle(R.string.add_activity_button);
+            actionBar.setTitle(R.string.add_item);
             addSetup();
         } else if(originActivity.equals("Edit")) {
             actionBar.setTitle(R.string.edit);
@@ -132,10 +131,10 @@ public class AddPerson extends AppCompatActivity {
             Context context = getApplicationContext();
             int duration = Toast.LENGTH_LONG;
             String name = Objects.requireNonNull(nameEditText.getText()).toString();
-            String phone = Objects.requireNonNull(phoneEditText.getText()).toString();
+            String desc = Objects.requireNonNull(descEditText.getText()).toString();
 
-            if (validate(name, true) || validate(phone, false)) {
-                Toast toast = Toast.makeText(context, R.string.input_warning, duration);
+            if (validate(name, true) || validate(desc, false) || desc.length() < 2) {
+                Toast toast = Toast.makeText(context, R.string.input_warning2, duration);
                 toast.show();
             } else if (currentPhotoPath == null) {
                 Toast toast = Toast.makeText(context, R.string.image_warning, duration);
@@ -143,11 +142,11 @@ public class AddPerson extends AppCompatActivity {
             } else {
                 SecureRandom random = new SecureRandom();
                 int cryptoId = random.nextInt();
-                while (database.checkForCollision(cryptoId, false) || cryptoId == -1) {
+                while (database.checkForCollision(cryptoId, true) || cryptoId == -1) {
                     cryptoId = random.nextInt();
                 }
-                if (database.insertPerson(cryptoId, name, phone, currentPhotoPath)) {
-                    Toast toast = Toast.makeText(context, R.string.add_success, duration);
+                if (database.insertItem(cryptoId, name, desc, currentPhotoPath)) {
+                    Toast toast = Toast.makeText(context, R.string.add_success2, duration);
                     toast.show();
                 }
                 finish();
@@ -158,11 +157,11 @@ public class AddPerson extends AppCompatActivity {
     private void editSetup() {
         addButton.setText(R.string.update);
         String currentName = extras.getString("Name");
-        String currentPhone = extras.getString("Phone");
+        String currentDesc = extras.getString("Desc");
         String currentImage = extras.getString("Image");
         currentPhotoPath = currentImage;
         nameEditText.setText(currentName);
-        phoneEditText.setText(currentPhone);
+        descEditText.setText(currentDesc);
         String formatted = getString(R.string.image_path1, currentImage);
         imagePath.setText(formatted);
 
@@ -170,11 +169,11 @@ public class AddPerson extends AppCompatActivity {
             Context context = getApplicationContext();
             int duration = Toast.LENGTH_LONG;
             String name = Objects.requireNonNull(nameEditText.getText()).toString();
-            String phone = Objects.requireNonNull(phoneEditText.getText()).toString();
+            String desc = Objects.requireNonNull(descEditText.getText()).toString();
 
 
-            if (validate(name, true) || validate(phone, false)) {
-                Toast toast = Toast.makeText(context, R.string.input_warning, duration);
+            if (validate(name, true) || validate(desc, false)) {
+                Toast toast = Toast.makeText(context, R.string.input_warning2, duration);
                 toast.show();
             } else if (currentPhotoPath == null) {
                 Toast toast = Toast.makeText(context, R.string.image_warning, duration);
@@ -184,8 +183,8 @@ public class AddPerson extends AppCompatActivity {
                     File oldImage = new File(currentImage);
                     oldImage.delete();
                 }
-                if (database.updatePerson(extras.getInt("id"), name, phone, currentPhotoPath)) {
-                    Toast toast = Toast.makeText(context, R.string.edit_success, duration);
+                if (database.updateItem(extras.getInt("id"), name, desc, currentPhotoPath)) {
+                    Toast toast = Toast.makeText(context, R.string.edit_success2, duration);
                     toast.show();
                 }
                 finish();
@@ -252,13 +251,18 @@ public class AddPerson extends AppCompatActivity {
         }
         File image = File.createTempFile(imageFileName, ".jpg", storageDir);
         currentPhotoPath = image.getAbsolutePath();
-        /*File image = new File(getFilesDir(), imageFileName);
-        if(image.createNewFile()){
-            currentPhotoPath = image.getAbsolutePath();
-        } else {
-            image = null;
-        }*/
         return image;
+    }
+
+    private boolean validate (String text, boolean name) {
+        if (name){
+            String regex = "[\\n]";
+            Pattern pattern = Pattern.compile(regex);
+            Matcher matcher = pattern.matcher(text);
+            return matcher.find() || text.length() <= 1 || text.length() > 31;
+        } else {
+            return text.length() > 400;
+        }
     }
 
     @Override
@@ -268,30 +272,5 @@ public class AddPerson extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    /*public final boolean containsDigit(String s) {
-        boolean containsDigit = false;
-
-        if (s != null && !s.isEmpty()) {
-            for (char c : s.toCharArray()) {
-                if (containsDigit = Character.isDigit(c)) {
-                    break;
-                }
-            }
-        }
-        return containsDigit;
-    }*/
-
-    private boolean validate (String text, boolean isName) {
-        if(isName) {
-            //String regex = "[&^*/$!@#<>;()\\\\|\\[\\]{}:?_~%µ¶×»÷¿°·€▲Δ¡△π™✓£¥✔®¬\u00AD§©¨¤¢+=\\n]";
-            String regex = "[\\n]";
-            Pattern pattern = Pattern.compile(regex);
-            Matcher matcher = pattern.matcher(text);
-            return matcher.find() || text.length() <= 1 || text.length() > 31;
-        } else {
-            return !TextUtils.isDigitsOnly(text) || text.length() != 10;
-        }
     }
 }

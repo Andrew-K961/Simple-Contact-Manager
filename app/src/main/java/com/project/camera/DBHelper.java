@@ -8,20 +8,25 @@ import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteDatabase;
 
-public class DBHelper extends SQLiteOpenHelper{
+public class DBHelper extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "MyDBName.db";
 
     public DBHelper(Context context) {
-        super(context, DATABASE_NAME , null, 1);
+        super(context, DATABASE_NAME , null, 2);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(
                 "create table people " +
-                "(id integer primary key, cryptographic_id int, name varchar(255)," +
+                "(id integer primary key, cryptographic_id int, name varchar(32)," +
                 " phone varchar(20), imagePath varchar(255))"
+        );
+        db.execSQL(
+                "create table items " +
+                "(id integer primary key, cryptographic_id int, name varchar(128)," +
+                " description varchar(402), imagePath varchar(255))"
         );
     }
 
@@ -31,7 +36,9 @@ public class DBHelper extends SQLiteOpenHelper{
         onCreate(db);
     }
 
-    public boolean insert(int cg_id, String name, String phone, String imagePath){
+//************ People
+
+    public boolean insertPerson(int cg_id, String name, String phone, String imagePath){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put("cryptographic_id", cg_id);
@@ -43,7 +50,7 @@ public class DBHelper extends SQLiteOpenHelper{
         return true;
     }
 
-    public boolean update(Integer id, String name, String phone, String imagePath){
+    public boolean updatePerson(Integer id, String name, String phone, String imagePath){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put("name", name);
@@ -54,7 +61,7 @@ public class DBHelper extends SQLiteOpenHelper{
         return true;
     }
 
-    public Integer delete(Integer id){
+    public Integer deletePerson(Integer id){
         SQLiteDatabase db = this.getWritableDatabase();
         int rows = db.delete("people",
                 "id = ? ",
@@ -63,7 +70,7 @@ public class DBHelper extends SQLiteOpenHelper{
         return rows;
     }
 
-    public Cursor getRow(int id){
+    public Cursor getPersonRow(int id){
         SQLiteDatabase db = this.getReadableDatabase();
         String[] arg = {String.valueOf(id)};
         return db.rawQuery( "select id, cryptographic_id, name, phone, imagePath " +
@@ -76,54 +83,7 @@ public class DBHelper extends SQLiteOpenHelper{
         return (int) DatabaseUtils.queryNumEntries(db, "people");
     }
 
-    public boolean checkForCollision(int cryptoId){
-        SQLiteDatabase db = this.getReadableDatabase();
-        String[] arg = {String.valueOf(cryptoId)};
-
-        Cursor search = db.rawQuery("SELECT cryptographic_id " +
-                "FROM people " +
-                "WHERE cryptographic_id=?",arg);
-        if(search.getCount() >= 1){
-            search.close();
-            db.close();
-            return true;
-        } else {
-            search.close();
-            db.close();
-            return false;
-        }
-    }
-
-    public int nfcSearch(int cryptoId){
-        SQLiteDatabase db = this.getReadableDatabase();
-        String[] arg = {String.valueOf(cryptoId)};
-        int result;
-
-        Cursor search = db.rawQuery("SELECT id FROM people WHERE cryptographic_id=?",arg);
-        search.moveToFirst();
-        if (!search.isNull(0)){
-            result = search.getInt(0);
-        } else {
-            result = -1;
-        }
-        search.close();
-        db.close();
-        return result;
-    }
-
-    public int getCryptoId (int id){
-        SQLiteDatabase db = this.getReadableDatabase();
-        String[] arg = {String.valueOf(id)};
-
-        Cursor search = db.rawQuery("SELECT cryptographic_id FROM people WHERE id=?",arg);
-        search.moveToFirst();
-        int result = search.getInt(0);
-        search.close();
-        db.close();
-        return result;
-    }
-
-    public ArrayList<Person> getAll() {
+    public ArrayList<Person> getAllPeople() {
         ArrayList<Person> array_list = new ArrayList<>();
 
         SQLiteDatabase db = this.getReadableDatabase();
@@ -140,7 +100,7 @@ public class DBHelper extends SQLiteOpenHelper{
         return array_list;
     }
 
-    public ArrayList<Person> search(String query) {
+    public ArrayList<Person> searchPeople(String query) {
         SQLiteDatabase db = this.getReadableDatabase();
         String[] params = {"%" + query + "%", "%" + query + "%"};
         Cursor result = db.rawQuery("select id, name, phone from people where name like ? or phone like ?", params);
@@ -154,5 +114,144 @@ public class DBHelper extends SQLiteOpenHelper{
         result.close();
         db.close();
         return array_list;
+    }
+
+//************ Items
+
+    public boolean insertItem(int cg_id, String name, String desc, String imagePath){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("cryptographic_id", cg_id);
+        contentValues.put("name", name);
+        contentValues.put("description", desc);
+        contentValues.put("imagePath", imagePath);
+        db.insert("items", null, contentValues);
+        db.close();
+        return true;
+    }
+
+    public boolean updateItem(Integer id, String name, String desc, String imagePath){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("name", name);
+        contentValues.put("description", desc);
+        contentValues.put("imagePath", imagePath);
+        db.update("items", contentValues, "id = ? ", new String[] { Integer.toString(id) } );
+        db.close();
+        return true;
+    }
+
+    public Integer deleteItem(Integer id){
+        SQLiteDatabase db = this.getWritableDatabase();
+        int rows = db.delete("items",
+                "id = ? ",
+                new String[] { Integer.toString(id) });
+        db.close();
+        return rows;
+    }
+
+    public Cursor getItemRow(int id){
+        SQLiteDatabase db = this.getReadableDatabase();
+        String[] arg = {String.valueOf(id)};
+        return db.rawQuery( "select id, cryptographic_id, name, description, imagePath " +
+                "from items " +
+                "where id=?", arg);
+    }
+
+    public ArrayList<Item> getAllItems() {
+        ArrayList<Item> array_list = new ArrayList<>();
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res =  db.rawQuery( "select id, name from items", null );
+        res.moveToFirst();
+
+        while(!res.isAfterLast()){
+            Item item = new Item(res.getInt(0), res.getString(1));
+            array_list.add(item);
+            res.moveToNext();
+        }
+        res.close();
+        db.close();
+        return array_list;
+    }
+
+    public ArrayList<Item> searchItem(String query) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String[] params = {"%" + query + "%"};
+        Cursor result = db.rawQuery("select id, name from items where name like ?", params);
+        result.moveToFirst();
+        ArrayList<Item> array_list = new ArrayList<>();
+        while(!result.isAfterLast()){
+            Item item = new Item(result.getInt(0), result.getString(1));
+            array_list.add(item);
+            result.moveToNext();
+        }
+        result.close();
+        db.close();
+        return array_list;
+    }
+
+//************ Generic
+
+    public boolean checkForCollision(int cryptoId, boolean item){
+        SQLiteDatabase db = this.getReadableDatabase();
+        String[] arg = {String.valueOf(cryptoId)};
+        String table = " people ";
+
+        if (item){
+            table = " items ";
+        }
+
+        Cursor search = db.rawQuery("SELECT cryptographic_id " +
+                "FROM" + table +
+                "WHERE cryptographic_id=?",arg);
+        if(search.getCount() >= 1){
+            search.close();
+            db.close();
+            return true;
+        } else {
+            search.close();
+            db.close();
+            return false;
+        }
+    }
+
+    public int nfcSearch(int cryptoId, boolean item){
+        SQLiteDatabase db = this.getReadableDatabase();
+        String[] arg = {String.valueOf(cryptoId)};
+        int result;
+        String table = " people ";
+
+        if (item){
+            table = " items ";
+        }
+
+        Cursor search = db.rawQuery("SELECT id FROM"+table+"WHERE cryptographic_id=?",arg);
+        search.moveToFirst();
+        if ((search != null) && (search.getCount() > 0)){
+            result = search.getInt(0);
+        } else {
+            result = -1;
+        }
+        search.close();
+        db.close();
+        return result;
+    }
+
+    public int getCryptoId (int id, boolean item){
+        SQLiteDatabase db = this.getReadableDatabase();
+        String[] arg = {String.valueOf(id)};
+        String table = " people ";
+
+        if (item){
+            table = " items ";
+        }
+
+        Cursor search = db.rawQuery("SELECT cryptographic_id FROM"+table+"WHERE id=?",arg);
+        search.moveToFirst();
+        int result = search.getInt(0);
+        search.close();
+        db.close();
+        return result;
     }
 }

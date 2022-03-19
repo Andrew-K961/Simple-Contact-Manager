@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.nfc.FormatException;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
@@ -22,9 +23,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.PreferenceManager;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.Objects;
 
 public class NFC extends AppCompatActivity {
 
@@ -35,10 +38,13 @@ public class NFC extends AppCompatActivity {
     private Button button;
     private String writeId;
     private int contactId;
-    Tag nfcTag;
-    PendingIntent pendingIntent;
-    IntentFilter[] writeTagFilters;
-    NfcAdapter nfcAdapter;
+    private Tag nfcTag;
+    private PendingIntent pendingIntent;
+    private IntentFilter[] writeTagFilters;
+    private NfcAdapter nfcAdapter;
+    SharedPreferences settings;
+    private boolean itemMode;
+
     TextWatcher watcher = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -72,6 +78,9 @@ public class NFC extends AppCompatActivity {
         button = findViewById(R.id.button2);
         db = new DBHelper(this);
 
+        settings = PreferenceManager.getDefaultSharedPreferences(this);
+        itemMode = !settings.getString("app_mode", "mode1").equals("mode1");
+
         if(getIntent().getIntExtra("Mode", 0) == 1){
             writeId = String.valueOf(getIntent().getIntExtra("Id", 0));
             mode.setText(R.string.mode1);
@@ -79,11 +88,15 @@ public class NFC extends AppCompatActivity {
             crypto_id.setText(getString(R.string.id3, writeId));
         } else {
             crypto_id.setText(getString(R.string.id3, " "));
+            if (itemMode){
+                button.setText(R.string.goTo_item);
+            }
         }
         button.setOnClickListener(this::goTo_or_write);
         button.setVisibility(View.INVISIBLE);
 
         status.addTextChangedListener(watcher);
+        Objects.requireNonNull(getSupportActionBar()).setTitle(R.string.nfc);
 
         nfcAdapter = NfcAdapter.getDefaultAdapter(this);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
@@ -141,7 +154,7 @@ public class NFC extends AppCompatActivity {
         }
         try {
             int readId = Integer.parseInt(text);
-            contactId = db.nfcSearch(readId);
+            contactId = db.nfcSearch(readId, itemMode);
             if (contactId == -1){
                 crypto_id.setText(getString(R.string.id3, getString(R.string.empty)));
                 status.setText(R.string.error3);
@@ -213,7 +226,7 @@ public class NFC extends AppCompatActivity {
 
     private void goTo_or_write(View view) {
         if (mode.getText()==getText(R.string.mode0)){
-            Intent intent = new Intent(getApplicationContext(),DisplayContact.class);
+            Intent intent = new Intent(getApplicationContext(), Display.class);
             intent.putExtra("id", contactId);
             startActivity(intent);
         } else if (mode.getText()==getText(R.string.mode1)){

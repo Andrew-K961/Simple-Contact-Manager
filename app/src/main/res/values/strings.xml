@@ -43,7 +43,7 @@
     <string name="nfc_image">NFC Image</string>
     <string name="mode1">Write Mode</string>
     <string name="mode0">Read Mode</string>
-    <string name="go_to">Go To Contact Page</string>
+    <string name="go_to">Go To Contact</string>
     <string name="empty">null</string>
     <string name="error1">ERROR: Tag is Empty</string>
     <string name="error2">ERROR: Not an Id</string>
@@ -52,5 +52,34 @@
     <string name="tagFound">Tag Found</string>
     <string name="error0">ERROR</string>
     <string name="write_success">Write Successful</string>
-    <string name="contactChooser">Select a Contact</string>
+    <string name="select_contact">Select a Contact</string>
+    <string name="title_activity_settings">Settings</string>
+    <string name="general_header">General</string>
+    <string name="app_mode">Mode</string>
+    <string name="mode_contacts">Contacts Mode</string>
+    <string name="mode_inventory">Inventorization Mode</string>
+    <string name="require_photo">Require Photos</string>
+    <string name="contact_chooser">Contact Chooser</string>
+    <string name="inventory">Inventory Manager</string>
+    <string name="add_item">Add Item</string>
+    <string name="inventory_search">Search by name</string>
+    <string name="hint3">Description</string>
+    <string name="input_warning2">Please enter a valid name and/or description</string>
+    <string name="add_success2">Successfully Added Item</string>
+    <string name="desc_warning">Description must be longer</string>
+    <string name="desc_warning2">Description must be shorter</string>
+    <string name="edit_success2">Successfully updated item</string>
+    <string name="desc">Description</string>
+    <string name="desc2">Description: %1$s</string>
+    <string name="item_chooser">Item Chooser</string>
+    <string name="select_item">Select an Item</string>
+    <string name="goTo_item">Go To Item</string>
+
+    <!-- Unneeded template stuff
+    <string name="signature_title">Your signature</string>
+    <string name="sync_title">Sync email periodically</string>
+    <string name="attachment_title">Download incoming attachments</string>
+    <string name="attachment_summary_on">Automatically download attachments for incoming emails
+    </string>
+    <string name="attachment_summary_off">Only download attachments when manually requested</string>-->
 </resources>
