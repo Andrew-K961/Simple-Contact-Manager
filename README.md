@@ -1,8 +1,8 @@
 # Simple-Contact-Manager
-A simple contact manager with NFC features, and soon an inventory manager as well. This is an educational project that is still being developed.
+A simple contact or inventory manager with NFC features. This is an educational project that is still being developed.
 
 >### Current version
-A complete contact manager which allows for storing contact's name, phone number, and a picture. Can also write a contacts ID to a card for easier access.
+A complete contact manager which allows for storing contact's name, phone number, and a picture. An inventorization mode that has similiar features, but for storing items. Also includes an NFC writer and reader for quicker access to contacts/items.
 
 >### Planned
-An inventorization mode which can be accessed through a settings menu
+Minor quality of life features and more settings.
