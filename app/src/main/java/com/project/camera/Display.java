@@ -32,6 +32,11 @@ public class Display extends AppCompatActivity {
     private String rawDesc;
     private String mode;
     SharedPreferences settings;
+    private TextView textViewName;
+    private TextView textViewPhone;
+    private TextView textViewDesc;
+    private TextView textViewId;
+    private ImageView picture;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,10 +69,10 @@ public class Display extends AppCompatActivity {
     }
 
     private void setContactInfo() {
-        TextView textViewName = findViewById(R.id.name);
-        TextView textViewPhone = findViewById(R.id.phone);
-        TextView textViewId = findViewById(R.id.id);
-        ImageView picture = findViewById(R.id.imageView);
+        picture = findViewById(R.id.imageView);
+        textViewId = findViewById(R.id.id);
+        textViewPhone = findViewById(R.id.phone);
+        textViewName = findViewById(R.id.name);
 
         Cursor person = mydb.getPersonRow(id);
         person.moveToFirst();
@@ -108,10 +113,10 @@ public class Display extends AppCompatActivity {
     }
 
     private void setItemInfo() {
-        TextView textViewName = findViewById(R.id.itemName);
-        TextView textViewDesc = findViewById(R.id.description);
-        TextView textViewId = findViewById(R.id.cg_id);
-        ImageView picture = findViewById(R.id.itemPicture);
+        textViewName = findViewById(R.id.itemName);
+        textViewDesc = findViewById(R.id.description);
+        textViewId = findViewById(R.id.cg_id);
+        picture = findViewById(R.id.itemPicture);
 
         Cursor item = mydb.getItemRow(id);
         item.moveToFirst();
@@ -190,5 +195,54 @@ public class Display extends AppCompatActivity {
         }
         intent.putExtras(data);
         startActivity(intent);
+    }
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Cursor updated;
+        if (mode.equals("mode1")){
+            updated = mydb.getPersonRow(id);
+        } else {
+            updated = mydb.getItemRow(id);
+        }
+        updated.moveToFirst();
+
+        if(!Objects.equals(updated.getString(2), rawName)){
+            String name = getString(R.string.name, updated.getString(2));
+            rawName = updated.getString(2);
+            textViewName.setText(name);
+            Objects.requireNonNull(getSupportActionBar()).setTitle(rawName);
+        }
+        if(!Objects.equals(updated.getString(3), rawPhone) && mode.equals("mode1")){
+            String formattedPhone = updated.getString(3).replaceFirst("(\\d{3})(\\d{3})(\\d+)", "($1) $2-$3");
+            String phone = getString(R.string.phone, formattedPhone);
+            rawPhone = updated.getString(3);
+            textViewPhone.setText(phone);
+        }
+        if(!Objects.equals(updated.getString(3), rawDesc) && mode.equals("mode2")){
+            String desc = getString(R.string.desc2, updated.getString(3));
+            rawDesc = updated.getString(3);
+            textViewDesc.setText(desc);
+        }
+        if(!Objects.equals(updated.getString(4), imagePath)){
+            imagePath = updated.getString(4);
+            Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
+
+            try {
+                ExifInterface ei = new ExifInterface(imagePath);
+                if (ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
+                        == ExifInterface.ORIENTATION_ROTATE_90) {
+                    Matrix matrix = new Matrix();
+                    matrix.postRotate(90);
+                    bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                Toast toast = Toast.makeText(getApplicationContext(), R.string.error0, Toast.LENGTH_LONG);
+                toast.show();
+            }
+            picture.setImageBitmap(bitmap);
+        }
+        updated.close();
     }
 }

@@ -41,6 +41,7 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
     private boolean searchState;
     private String mode;
     SharedPreferences settings;
+    private Spinner spinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
 
         TextView sort = findViewById(R.id.sort_by);
         TextViewCompat.setAutoSizeTextTypeWithDefaults(sort, TextViewCompat.AUTO_SIZE_TEXT_TYPE_UNIFORM);
-        Spinner spinner = findViewById(R.id.spinner);
+        spinner = findViewById(R.id.spinner);
         ArrayAdapter<CharSequence> adapter;
 
 //************* Mode
@@ -130,7 +131,15 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
     @Override
     protected void onRestart() {
         super.onRestart();
-        this.recreate();
+        if (mode.equals("mode2")) {
+            itemArrayList.clear();
+            itemArrayList.addAll(database.getAllItems());
+            itemArrayAdapter.notifyDataSetChanged();
+        } else {
+            personArrayList.clear();
+            personArrayList.addAll(database.getAllPeople());
+            personArrayAdapter.notifyDataSetChanged();
+        }
     }
 
     @Override
