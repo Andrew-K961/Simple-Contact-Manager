@@ -137,10 +137,10 @@ public class AddPerson extends AppCompatActivity {
             if (validate(name, true) || validate(phone, false)) {
                 Toast toast = Toast.makeText(context, R.string.input_warning, duration);
                 toast.show();
-            } else if (currentPhotoPath == null) {
-                Toast toast = Toast.makeText(context, R.string.image_warning, duration);
-                toast.show();
             } else {
+                if (currentPhotoPath == null){
+                    currentPhotoPath = "";
+                }
                 SecureRandom random = new SecureRandom();
                 int cryptoId = random.nextInt();
                 while (database.checkForCollision(cryptoId, false) || cryptoId == -1) {
@@ -163,7 +163,13 @@ public class AddPerson extends AppCompatActivity {
         currentPhotoPath = currentImage;
         nameEditText.setText(currentName);
         phoneEditText.setText(currentPhone);
-        String formatted = getString(R.string.image_path1, currentImage);
+        String formatted;
+        if (Objects.equals(currentImage, "")){
+            formatted = getString(R.string.image_path2);
+        } else {
+            formatted = getString(R.string.image_path1, currentImage);
+        }
+
         imagePath.setText(formatted);
 
         addButton.setOnClickListener(v -> {
@@ -176,11 +182,8 @@ public class AddPerson extends AppCompatActivity {
             if (validate(name, true) || validate(phone, false)) {
                 Toast toast = Toast.makeText(context, R.string.input_warning, duration);
                 toast.show();
-            } else if (currentPhotoPath == null) {
-                Toast toast = Toast.makeText(context, R.string.image_warning, duration);
-                toast.show();
             } else {
-                if(!(currentPhotoPath.equals(currentImage))){
+                if(!(currentPhotoPath.equals(currentImage)) && !Objects.equals(currentImage, "")){
                     File oldImage = new File(currentImage);
                     oldImage.delete();
                 }

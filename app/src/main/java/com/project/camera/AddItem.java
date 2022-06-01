@@ -136,10 +136,10 @@ public class AddItem extends AppCompatActivity {
             if (validate(name, true) || validate(desc, false) || desc.length() < 2) {
                 Toast toast = Toast.makeText(context, R.string.input_warning2, duration);
                 toast.show();
-            } else if (currentPhotoPath == null) {
-                Toast toast = Toast.makeText(context, R.string.image_warning, duration);
-                toast.show();
             } else {
+                if (currentPhotoPath == null){
+                    currentPhotoPath = "";
+                }
                 SecureRandom random = new SecureRandom();
                 int cryptoId = random.nextInt();
                 while (database.checkForCollision(cryptoId, true) || cryptoId == -1) {
@@ -162,7 +162,13 @@ public class AddItem extends AppCompatActivity {
         currentPhotoPath = currentImage;
         nameEditText.setText(currentName);
         descEditText.setText(currentDesc);
-        String formatted = getString(R.string.image_path1, currentImage);
+        String formatted;
+
+        if (Objects.equals(currentImage, "")){
+            formatted = getString(R.string.image_path2);
+        } else {
+            formatted = getString(R.string.image_path1, currentImage);
+        }
         imagePath.setText(formatted);
 
         addButton.setOnClickListener(v -> {
@@ -179,7 +185,7 @@ public class AddItem extends AppCompatActivity {
                 Toast toast = Toast.makeText(context, R.string.image_warning, duration);
                 toast.show();
             } else {
-                if(!(currentPhotoPath.equals(currentImage))){
+                if(!Objects.equals(currentImage, currentPhotoPath) && !Objects.equals(currentImage, "")){
                     File oldImage = new File(currentImage);
                     oldImage.delete();
                 }

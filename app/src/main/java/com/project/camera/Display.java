@@ -77,9 +77,6 @@ public class Display extends AppCompatActivity {
         Cursor person = mydb.getPersonRow(id);
         person.moveToFirst();
 
-        imagePath = person.getString(4);
-        Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
-
         String name = getString(R.string.name, person.getString(2));
         String formattedPhone = person.getString(3).replaceFirst("(\\d{3})(\\d{3})(\\d+)", "($1) $2-$3");
         String phone = getString(R.string.phone, formattedPhone);
@@ -88,13 +85,19 @@ public class Display extends AppCompatActivity {
         rawName = person.getString(2);
         rawPhone = person.getString(3);
 
-        person.close();
-
         Objects.requireNonNull(getSupportActionBar()).setTitle(rawName);
 
         textViewName.setText(name);
         textViewPhone.setText(phone);
         textViewId.setText(crypto_id);
+
+        imagePath = person.getString(4);
+        person.close();
+        if (Objects.equals(imagePath, "")){
+            picture.setVisibility(View.INVISIBLE);
+            return;
+        }
+        Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
 
         try {
             ExifInterface ei = new ExifInterface(imagePath);
@@ -121,17 +124,12 @@ public class Display extends AppCompatActivity {
         Cursor item = mydb.getItemRow(id);
         item.moveToFirst();
 
-        imagePath = item.getString(4);
-        Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
-
         String name = getString(R.string.name, item.getString(2));
         String desc = getString(R.string.desc2, item.getString(3));
         String crypto_id = getString(R.string.id2, item.getString(1));
 
         rawName = item.getString(2);
         rawDesc = item.getString(3);
-
-        item.close();
 
         Objects.requireNonNull(getSupportActionBar()).setTitle(rawName);
 
@@ -141,6 +139,14 @@ public class Display extends AppCompatActivity {
 
         textViewDesc.setMovementMethod(new ScrollingMovementMethod());
 
+        imagePath = item.getString(4);
+        item.close();
+        if (Objects.equals(imagePath, "")){
+            picture.setVisibility(View.GONE);
+            textViewDesc.setMaxLines(15);
+            return;
+        }
+        Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
         try {
             ExifInterface ei = new ExifInterface(imagePath);
             if (ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
@@ -170,7 +176,7 @@ public class Display extends AppCompatActivity {
             CharSequence text = getResources().getString(R.string.delete_success);
             Toast toast = Toast.makeText(context, text, duration);
             toast.show();
-        } else {
+        } else if (!picture.exists()){
             CharSequence text = getResources().getString(R.string.delete_fail);
             Toast toast = Toast.makeText(context, text, duration);
             toast.show();
@@ -242,6 +248,7 @@ public class Display extends AppCompatActivity {
                 toast.show();
             }
             picture.setImageBitmap(bitmap);
+            picture.setVisibility(View.VISIBLE);
         }
         updated.close();
     }

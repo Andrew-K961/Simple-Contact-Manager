@@ -58,7 +58,6 @@
     <string name="app_mode">Mode</string>
     <string name="mode_contacts">Contacts Mode</string>
     <string name="mode_inventory">Inventorization Mode</string>
-    <string name="require_photo">Require Photos</string>
     <string name="contact_chooser">Contact Chooser</string>
     <string name="inventory">Inventory Manager</string>
     <string name="add_item">Add Item</string>
@@ -74,6 +73,7 @@
     <string name="item_chooser">Item Chooser</string>
     <string name="select_item">Select an Item</string>
     <string name="goTo_item">Go To Item</string>
+    <string name="show_quantity">Show Quantity on Home Page</string>
 
     <!-- Unneeded template stuff
     <string name="signature_title">Your signature</string>
