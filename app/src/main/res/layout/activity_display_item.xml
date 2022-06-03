@@ -23,13 +23,14 @@
 
     <TextView
         android:id="@+id/cg_id"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/id"
         android:textColor="@android:color/black"
-        android:textSize="18sp"
+        android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@+id/description"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/itemName" />
 
@@ -95,4 +96,17 @@
         app:layout_constraintStart_toEndOf="@+id/deleteButton"
         app:layout_constraintTop_toBottomOf="@+id/itemPicture"
         app:layout_constraintVertical_bias="0.84000003" />
+
+    <TextView
+        android:id="@+id/quantityDisplay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/quantity"
+        android:textColor="@android:color/black"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/description"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.92"
+        app:layout_constraintStart_toEndOf="@+id/cg_id"
+        app:layout_constraintTop_toBottomOf="@+id/itemName" />
 </androidx.constraintlayout.widget.ConstraintLayout>

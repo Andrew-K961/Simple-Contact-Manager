@@ -74,6 +74,11 @@
     <string name="select_item">Select an Item</string>
     <string name="goTo_item">Go To Item</string>
     <string name="show_quantity">Show Quantity on Home Page</string>
+    <string name="quantity">Quantity</string>
+    <string name="enable_quantity">Enable Quantity</string>
+    <string name="quantity_default">Enable Quantity by Default</string>
+    <string name="quantity_warning">Please enter a proper quantity</string>
+    <string name="quantity_display">Quantity: %1$s</string>
 
     <!-- Unneeded template stuff
     <string name="signature_title">Your signature</string>

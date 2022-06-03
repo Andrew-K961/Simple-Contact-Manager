@@ -1,19 +1,20 @@
 package com.project.camera;
 
-import java.util.ArrayList;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+
+import java.util.ArrayList;
 
 public class DBHelper extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "MyDBName.db";
 
     public DBHelper(Context context) {
-        super(context, DATABASE_NAME , null, 2);
+        super(context, DATABASE_NAME , null, 3);
     }
 
     @Override
@@ -26,13 +27,14 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL(
                 "create table items " +
                 "(id integer primary key, cryptographic_id int, name varchar(128)," +
-                " description varchar(402), imagePath varchar(255))"
+                " description varchar(402), imagePath varchar(255), quantity integer)"
         );
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS people");
+        db.execSQL("DROP TABLE IF EXISTS items");
         onCreate(db);
     }
 
@@ -61,13 +63,10 @@ public class DBHelper extends SQLiteOpenHelper {
         return true;
     }
 
-    public Integer deletePerson(Integer id){
+    public void deletePerson(Integer id){
         SQLiteDatabase db = this.getWritableDatabase();
-        int rows = db.delete("people",
-                "id = ? ",
-                new String[] { Integer.toString(id) });
+        db.delete("people", "id = ? ", new String[] { Integer.toString(id) });
         db.close();
-        return rows;
     }
 
     public Cursor getPersonRow(int id){
@@ -118,42 +117,41 @@ public class DBHelper extends SQLiteOpenHelper {
 
 //************ Items
 
-    public boolean insertItem(int cg_id, String name, String desc, String imagePath){
+    public boolean insertItem(int cg_id, String name, String desc, String imagePath, int quantity){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put("cryptographic_id", cg_id);
         contentValues.put("name", name);
         contentValues.put("description", desc);
         contentValues.put("imagePath", imagePath);
+        contentValues.put("quantity", quantity);
         db.insert("items", null, contentValues);
         db.close();
         return true;
     }
 
-    public boolean updateItem(Integer id, String name, String desc, String imagePath){
+    public boolean updateItem(Integer id, String name, String desc, String imagePath, int quantity){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put("name", name);
         contentValues.put("description", desc);
         contentValues.put("imagePath", imagePath);
+        contentValues.put("quantity", quantity);
         db.update("items", contentValues, "id = ? ", new String[] { Integer.toString(id) } );
         db.close();
         return true;
     }
 
-    public Integer deleteItem(Integer id){
+    public void deleteItem(Integer id){
         SQLiteDatabase db = this.getWritableDatabase();
-        int rows = db.delete("items",
-                "id = ? ",
-                new String[] { Integer.toString(id) });
+        db.delete("items", "id = ? ", new String[] { Integer.toString(id) });
         db.close();
-        return rows;
     }
 
     public Cursor getItemRow(int id){
         SQLiteDatabase db = this.getReadableDatabase();
         String[] arg = {String.valueOf(id)};
-        return db.rawQuery( "select id, cryptographic_id, name, description, imagePath " +
+        return db.rawQuery( "select id, cryptographic_id, name, description, imagePath, quantity " +
                 "from items " +
                 "where id=?", arg);
     }
@@ -162,11 +160,11 @@ public class DBHelper extends SQLiteOpenHelper {
         ArrayList<Item> array_list = new ArrayList<>();
 
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res =  db.rawQuery( "select id, name from items", null );
+        Cursor res =  db.rawQuery( "select id, name, quantity from items", null );
         res.moveToFirst();
 
         while(!res.isAfterLast()){
-            Item item = new Item(res.getInt(0), res.getString(1));
+            Item item = new Item(res.getInt(0), res.getString(1), res.getInt(2));
             array_list.add(item);
             res.moveToNext();
         }
@@ -178,11 +176,11 @@ public class DBHelper extends SQLiteOpenHelper {
     public ArrayList<Item> searchItem(String query) {
         SQLiteDatabase db = this.getReadableDatabase();
         String[] params = {"%" + query + "%"};
-        Cursor result = db.rawQuery("select id, name from items where name like ?", params);
+        Cursor result = db.rawQuery("select id, name, quantity from items where name like ?", params);
         result.moveToFirst();
         ArrayList<Item> array_list = new ArrayList<>();
         while(!result.isAfterLast()){
-            Item item = new Item(result.getInt(0), result.getString(1));
+            Item item = new Item(result.getInt(0), result.getString(1), result.getInt(2));
             array_list.add(item);
             result.moveToNext();
         }

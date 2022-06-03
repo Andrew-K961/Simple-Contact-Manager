@@ -4,12 +4,15 @@ import java.util.Comparator;
 
 public class Item {
 
-    int id;
-    String name;
+    private int id;
+    private String name;
+    private int quantity;
+    public static boolean showQuantity;
 
-    public Item (int id, String name) {
+    public Item (int id, String name, int quantity) {
         this.id = id;
         this.name = name;
+        this.quantity = quantity;
     }
 
     public void setId(int id) {
@@ -20,6 +23,10 @@ public class Item {
         this.name = name;
     }
 
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
     public int getId() {
         return id;
     }
@@ -28,8 +35,16 @@ public class Item {
         return name;
     }
 
+    public int getQuantity() {
+        return quantity;
+    }
+
     public String toString (){
-        return name;
+        if (showQuantity && quantity != -1){
+            return name + "\nQuantity: " + quantity;
+        } else {
+            return name;
+        }
     }
 
     public static Comparator<Item> NameSort = (p1, p2) -> {

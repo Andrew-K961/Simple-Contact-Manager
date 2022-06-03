@@ -47,6 +47,7 @@ public class AddPerson extends AppCompatActivity {
     private TextInputLayout phoneLayout;
     private Button addButton;
     private Bundle extras;
+    private boolean added = false;
 
     TextWatcher nameWatcher = new TextWatcher() {
         @Override
@@ -149,6 +150,7 @@ public class AddPerson extends AppCompatActivity {
                 if (database.insertPerson(cryptoId, name, phone, currentPhotoPath)) {
                     Toast toast = Toast.makeText(context, R.string.add_success, duration);
                     toast.show();
+                    added = true;
                 }
                 finish();
             }
@@ -156,6 +158,7 @@ public class AddPerson extends AppCompatActivity {
     }
 
     private void editSetup() {
+        added = true;
         addButton.setText(R.string.update);
         String currentName = extras.getString("Name");
         String currentPhone = extras.getString("Phone");
@@ -295,6 +298,17 @@ public class AddPerson extends AppCompatActivity {
             return matcher.find() || text.length() <= 1 || text.length() > 31;
         } else {
             return !TextUtils.isDigitsOnly(text) || text.length() != 10;
+        }
+    }
+
+    @Override
+    protected void onStop (){
+        super.onStop();
+        if (currentPhotoPath != null && !added){
+            File pic = new File(currentPhotoPath);
+            if (pic.exists()){
+                pic.delete();
+            }
         }
     }
 }

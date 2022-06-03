@@ -25,6 +25,11 @@
             app:defaultValue="true"
             app:iconSpaceReserved="false"/>
 
+        <SwitchPreferenceCompat
+            app:key="quantity default"
+            app:title="@string/quantity_default"
+            app:defaultValue="false"
+            app:iconSpaceReserved="false"/>
     </PreferenceCategory>
 
    <!-- <PreferenceCategory app:title="@string/sync_header">

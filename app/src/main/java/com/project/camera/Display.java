@@ -37,6 +37,8 @@ public class Display extends AppCompatActivity {
     private TextView textViewDesc;
     private TextView textViewId;
     private ImageView picture;
+    private TextView TV_quantity;
+    private int quantityInt;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,13 +122,17 @@ public class Display extends AppCompatActivity {
         textViewDesc = findViewById(R.id.description);
         textViewId = findViewById(R.id.cg_id);
         picture = findViewById(R.id.itemPicture);
+        TV_quantity = findViewById(R.id.quantityDisplay);
 
         Cursor item = mydb.getItemRow(id);
         item.moveToFirst();
 
+        quantityInt = item.getInt(5);
+
         String name = getString(R.string.name, item.getString(2));
         String desc = getString(R.string.desc2, item.getString(3));
         String crypto_id = getString(R.string.id2, item.getString(1));
+        String quantity = getString(R.string.quantity_display, String.valueOf(quantityInt));
 
         rawName = item.getString(2);
         rawDesc = item.getString(3);
@@ -138,6 +144,12 @@ public class Display extends AppCompatActivity {
         textViewId.setText(crypto_id);
 
         textViewDesc.setMovementMethod(new ScrollingMovementMethod());
+
+        if (quantity.equals("Quantity: -1")){
+            TV_quantity.setVisibility(View.GONE);
+        } else {
+            TV_quantity.setText(quantity);
+        }
 
         imagePath = item.getString(4);
         item.close();
@@ -176,7 +188,7 @@ public class Display extends AppCompatActivity {
             CharSequence text = getResources().getString(R.string.delete_success);
             Toast toast = Toast.makeText(context, text, duration);
             toast.show();
-        } else if (!picture.exists()){
+        } else if (picture.exists()){
             CharSequence text = getResources().getString(R.string.delete_fail);
             Toast toast = Toast.makeText(context, text, duration);
             toast.show();
@@ -198,6 +210,7 @@ public class Display extends AppCompatActivity {
         } else {
             intent = new Intent(this, AddItem.class);
             data.putString("Desc", rawDesc);
+            data.putInt("Quantity", quantityInt);
         }
         intent.putExtras(data);
         startActivity(intent);
@@ -249,6 +262,16 @@ public class Display extends AppCompatActivity {
             }
             picture.setImageBitmap(bitmap);
             picture.setVisibility(View.VISIBLE);
+        }
+        if (mode.equals("mode2") && updated.getInt(5) != quantityInt){
+            quantityInt = updated.getInt(5);
+            if (quantityInt != -1){
+                String formatted = getString(R.string.quantity_display, String.valueOf(quantityInt));
+                TV_quantity.setText(formatted);
+                TV_quantity.setVisibility(View.VISIBLE);
+            } else{
+                TV_quantity.setVisibility(View.GONE);
+            }
         }
         updated.close();
     }
