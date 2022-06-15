@@ -79,12 +79,6 @@
     <string name="quantity_default">Enable Quantity by Default</string>
     <string name="quantity_warning">Please enter a proper quantity</string>
     <string name="quantity_display">Quantity: %1$s</string>
-
-    <!-- Unneeded template stuff
-    <string name="signature_title">Your signature</string>
-    <string name="sync_title">Sync email periodically</string>
-    <string name="attachment_title">Download incoming attachments</string>
-    <string name="attachment_summary_on">Automatically download attachments for incoming emails
-    </string>
-    <string name="attachment_summary_off">Only download attachments when manually requested</string>-->
+    <string name="image_quality">Adjust Image Display Quality</string>
+    <string name="image_quality_summary">Lower values are recommended on older phones</string>
 </resources>

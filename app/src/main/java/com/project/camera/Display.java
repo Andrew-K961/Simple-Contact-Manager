@@ -39,6 +39,7 @@ public class Display extends AppCompatActivity {
     private ImageView picture;
     private TextView TV_quantity;
     private int quantityInt;
+    private int imageQuality;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +47,7 @@ public class Display extends AppCompatActivity {
 
         settings = PreferenceManager.getDefaultSharedPreferences(this);
         mode = settings.getString("app_mode", "mode1");
+        imageQuality = settings.getInt("image quality", 6) *100;
 
         Button editButton;
         Button deleteButton;
@@ -99,7 +101,16 @@ public class Display extends AppCompatActivity {
             picture.setVisibility(View.INVISIBLE);
             return;
         }
-        Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(imagePath, options);
+
+        // Calculate inSampleSize
+        options.inSampleSize = calculateInSampleSize(options, imageQuality);
+
+        // Decode bitmap with inSampleSize set
+        options.inJustDecodeBounds = false;
+        Bitmap bitmap = BitmapFactory.decodeFile(imagePath, options);
 
         try {
             ExifInterface ei = new ExifInterface(imagePath);
@@ -158,7 +169,18 @@ public class Display extends AppCompatActivity {
             textViewDesc.setMaxLines(15);
             return;
         }
-        Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
+
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(imagePath, options);
+
+        // Calculate inSampleSize
+        options.inSampleSize = calculateInSampleSize(options, imageQuality);
+
+        // Decode bitmap with inSampleSize set
+        options.inJustDecodeBounds = false;
+        Bitmap bitmap = BitmapFactory.decodeFile(imagePath, options);
+
         try {
             ExifInterface ei = new ExifInterface(imagePath);
             if (ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
@@ -172,7 +194,20 @@ public class Display extends AppCompatActivity {
             Toast toast = Toast.makeText(getApplicationContext(), R.string.error0, Toast.LENGTH_LONG);
             toast.show();
         }
+
+        //Bitmap bitmap2 = Bitmap.createScaledBitmap(bitmap, DpToPx(450), DpToPx(550), false);
         picture.setImageBitmap(bitmap);
+    }
+
+    public static int calculateInSampleSize(BitmapFactory.Options options, int IMAGE_MAX_SIZE) {
+        int inSampleSize = 1;
+
+        if (options.outHeight > IMAGE_MAX_SIZE || options.outWidth > IMAGE_MAX_SIZE) {
+            inSampleSize = (int)Math.pow(2, (int) Math.ceil(Math.log(IMAGE_MAX_SIZE /
+                    (double) Math.max(options.outHeight, options.outWidth)) / Math.log(0.5)));
+        }
+
+        return inSampleSize;
     }
 
     public void delete(View view) {
