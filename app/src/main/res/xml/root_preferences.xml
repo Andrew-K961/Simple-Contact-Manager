@@ -41,10 +41,28 @@
             app:iconSpaceReserved="false"/>
 
         <SwitchPreferenceCompat
+            app:key="show location"
+            app:title="@string/show_location"
+            app:defaultValue="true"
+            app:iconSpaceReserved="false"/>
+
+        <SwitchPreferenceCompat
             app:key="quantity default"
             app:title="@string/quantity_default"
             app:defaultValue="false"
             app:iconSpaceReserved="false"/>
+
+        <SwitchPreferenceCompat
+            app:key="location default"
+            app:title="@string/location_default"
+            app:defaultValue="false"
+            app:iconSpaceReserved="false"/>
+
+        <Preference
+            app:key="edit locations"
+            app:title="@string/edit_locations"
+            app:iconSpaceReserved="false"
+            />
     </PreferenceCategory>
 
    <!-- <PreferenceCategory app:title="@string/sync_header">

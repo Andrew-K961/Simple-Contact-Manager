@@ -7,12 +7,17 @@ public class Item {
     private int id;
     private String name;
     private int quantity;
+    private String location;
     public static boolean showQuantity;
+    public static boolean showLocation;
+    public static String quantityStr;
+    public static String locationStr;
 
-    public Item (int id, String name, int quantity) {
+    public Item (int id, String name, int quantity, String location) {
         this.id = id;
         this.name = name;
         this.quantity = quantity;
+        this.location = location;
     }
 
     public void setId(int id) {
@@ -40,8 +45,15 @@ public class Item {
     }
 
     public String toString (){
-        if (showQuantity && quantity != -1){
-            return name + "\nQuantity: " + quantity;
+        boolean showQuantmp = quantity != -1 && showQuantity;
+        boolean showLoctmp = !location.equals("-1") && showLocation;
+
+        if (showQuantmp && !showLoctmp){
+            return name + "\n" + quantityStr+ " " + quantity;
+        } else if (showLoctmp && !showQuantmp) {
+            return name + "\n" + locationStr+ " " + location;
+        } else if (showLoctmp) {
+            return name + "\n" + locationStr+ " " + location + "\n" + quantityStr + quantity;
         } else {
             return name;
         }

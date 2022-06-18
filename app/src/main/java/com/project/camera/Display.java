@@ -38,6 +38,8 @@ public class Display extends AppCompatActivity {
     private TextView textViewId;
     private ImageView picture;
     private TextView TV_quantity;
+    private TextView textViewLocation;
+    private String rawLocation;
     private int quantityInt;
     private int imageQuality;
 
@@ -134,6 +136,7 @@ public class Display extends AppCompatActivity {
         textViewId = findViewById(R.id.cg_id);
         picture = findViewById(R.id.itemPicture);
         TV_quantity = findViewById(R.id.quantityDisplay);
+        textViewLocation = findViewById(R.id.locationText);
 
         Cursor item = mydb.getItemRow(id);
         item.moveToFirst();
@@ -156,10 +159,17 @@ public class Display extends AppCompatActivity {
 
         textViewDesc.setMovementMethod(new ScrollingMovementMethod());
 
-        if (quantity.equals("Quantity: -1")){
+        if (quantity.equals(getString(R.string.quantity_display, "-1"))){
             TV_quantity.setVisibility(View.GONE);
         } else {
             TV_quantity.setText(quantity);
+        }
+        if (item.getInt(6) == -1){
+            textViewLocation.setVisibility(View.GONE);
+        } else {
+            rawLocation = mydb.getLocation(item.getInt(6));
+            String location = getString(R.string.location_display, mydb.getLocation(item.getInt(6)));
+            textViewLocation.setText(location);
         }
 
         imagePath = item.getString(4);
@@ -246,6 +256,7 @@ public class Display extends AppCompatActivity {
             intent = new Intent(this, AddItem.class);
             data.putString("Desc", rawDesc);
             data.putInt("Quantity", quantityInt);
+            data.putString("Location", rawLocation);
         }
         intent.putExtras(data);
         startActivity(intent);

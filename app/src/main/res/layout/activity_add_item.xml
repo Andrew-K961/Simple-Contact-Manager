@@ -27,7 +27,8 @@
         app:layout_constraintEnd_toStartOf="@+id/takePicture"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/descLayout" />
+        app:layout_constraintTop_toBottomOf="@+id/descLayout"
+        app:layout_constraintVertical_bias="0.6" />
 
     <ImageButton
         android:id="@+id/takePicture"
@@ -122,10 +123,33 @@
         android:ems="10"
         android:hint="@string/quantity"
         android:inputType="numberSigned"
-        app:layout_constraintBottom_toTopOf="@+id/imagePath"
-        app:layout_constraintEnd_toStartOf="@+id/checkBox"
+        app:layout_constraintBottom_toTopOf="@+id/location_chooser"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.05"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/descLayout"
-        app:layout_constraintVertical_bias="0.39" />
+        app:layout_constraintTop_toBottomOf="@+id/descLayout" />
+
+    <Spinner
+        android:id="@+id/location_chooser"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="15"
+        android:inputType="numberSigned"
+        app:layout_constraintBottom_toTopOf="@+id/imagePath"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.05"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextNumberSigned" />
+
+    <CheckBox
+        android:id="@+id/checkBox2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/enable_location"
+        app:layout_constraintBottom_toBottomOf="@+id/location_chooser"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/checkBox"
+        app:layout_constraintTop_toTopOf="@+id/location_chooser" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

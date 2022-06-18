@@ -49,7 +49,10 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
 
         settings = PreferenceManager.getDefaultSharedPreferences(this);
         mode = settings.getString("app_mode", "mode1");
-        Item.showQuantity = settings.getBoolean("show quantity", false);
+        Item.showQuantity = settings.getBoolean("show quantity", true);
+        Item.showLocation = settings.getBoolean("show location", true);
+        Item.quantityStr = getString(R.string.quantity_colon);
+        Item.locationStr = getString(R.string.location_colon);
 
 //************** Initiate Buttons
 
