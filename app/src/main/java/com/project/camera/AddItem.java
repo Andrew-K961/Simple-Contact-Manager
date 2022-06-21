@@ -183,7 +183,7 @@ public class AddItem extends AppCompatActivity {
         if (locationOn){
             locationCheck.setChecked(true);
         } else {
-            quantityCheck.setChecked(false);
+            locationCheck.setChecked(false);
             locationSpinner.setVisibility(View.INVISIBLE);
         }
 
