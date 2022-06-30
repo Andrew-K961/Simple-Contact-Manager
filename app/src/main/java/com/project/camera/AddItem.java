@@ -34,6 +34,8 @@ import java.io.IOException;
 import java.security.SecureRandom;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
@@ -183,7 +185,7 @@ public class AddItem extends AppCompatActivity {
         if (locationOn){
             locationCheck.setChecked(true);
         } else {
-            quantityCheck.setChecked(false);
+            locationCheck.setChecked(false);
             locationSpinner.setVisibility(View.INVISIBLE);
         }
 
@@ -230,6 +232,11 @@ public class AddItem extends AppCompatActivity {
                     cryptoId = random.nextInt();
                 }
                 if (database.insertItem(cryptoId, name, desc, currentPhotoPath, quantity, location)) {
+                    if (settings.getBoolean("Enable Sheets", false)){
+                        NotifyingThread add = new NetworkingThreads.AddRow(Collections.singletonList(Arrays.asList(
+                                database.getLastId(), name, desc, quantity, database.getLocation(location), cryptoId, currentPhotoPath)));
+                        add.start();
+                    }
                     Toast toast = Toast.makeText(context, R.string.add_success2, duration);
                     toast.show();
                     added = true;
@@ -327,6 +334,10 @@ public class AddItem extends AppCompatActivity {
                     oldImage.delete();
                 }
                 if (database.updateItem(extras.getInt("id"), name, desc, currentPhotoPath, quantity, location)) {
+                    if (settings.getBoolean("Enable Sheets", false)){
+                        NotifyingThread update = new NetworkingThreads.EditRow(extras.getInt("id"));
+                        update.start();
+                    }
                     Toast toast = Toast.makeText(context, R.string.edit_success2, duration);
                     toast.show();
                 }

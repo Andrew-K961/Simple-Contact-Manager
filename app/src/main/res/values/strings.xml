@@ -94,4 +94,9 @@
     <string name="show_location">Show Location on Home Page</string>
     <string name="quantity_colon">Quantity: </string>
     <string name="location_colon">Location: </string>
+    <string name="sheets_database">Google Sheets Database</string>
+    <string name="upload_all">Upload All to Sheets</string>
+    <string name="set_id">Set Sheet ID</string>
+    <string name="enable_sheets">Enable Sheets Database</string>
+    <string name="sheets_error1">Google Sheet Id not set</string>
 </resources>

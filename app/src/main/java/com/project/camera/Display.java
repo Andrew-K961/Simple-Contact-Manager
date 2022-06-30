@@ -1,6 +1,5 @@
 package com.project.camera;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -174,7 +173,7 @@ public class Display extends AppCompatActivity {
 
         imagePath = item.getString(4);
         item.close();
-        if (Objects.equals(imagePath, "")){
+        if (Objects.equals(imagePath, "") || imagePath == null){
             picture.setVisibility(View.GONE);
             textViewDesc.setMaxLines(15);
             return;
@@ -221,21 +220,25 @@ public class Display extends AppCompatActivity {
     }
 
     public void delete(View view) {
+        if (settings.getBoolean("Enable Sheets", false)){
+            NotifyingThread delete = new NetworkingThreads.DeleteRow(id);
+            delete.start();
+        }
+
         if (mode.equals("mode1")){
             mydb.deletePerson(id);
         } else {
             mydb.deleteItem(id);
         }
         File picture = new File(imagePath);
-        Context context = getApplicationContext();
         int duration = Toast.LENGTH_SHORT;
-        if(picture.delete()){
+        if(picture.delete() || imagePath.equals("")){
             CharSequence text = getResources().getString(R.string.delete_success);
-            Toast toast = Toast.makeText(context, text, duration);
+            Toast toast = Toast.makeText(this, text, duration);
             toast.show();
         } else if (picture.exists()){
             CharSequence text = getResources().getString(R.string.delete_fail);
-            Toast toast = Toast.makeText(context, text, duration);
+            Toast toast = Toast.makeText(this, text, duration);
             toast.show();
         }
         finish();
@@ -317,6 +320,15 @@ public class Display extends AppCompatActivity {
                 TV_quantity.setVisibility(View.VISIBLE);
             } else{
                 TV_quantity.setVisibility(View.GONE);
+            }
+        }
+        if (mode.equals("mode2") && !Objects.equals(mydb.getLocation(updated.getInt(6)), rawLocation)){
+            rawLocation = mydb.getLocation(updated.getInt(6));
+            if (rawLocation.equals("-1") || rawLocation.equals("")){
+                textViewLocation.setVisibility(View.GONE);
+            } else {
+                textViewLocation.setText(getString(R.string.location_display, rawLocation));
+                textViewLocation.setVisibility(View.VISIBLE);
             }
         }
         updated.close();

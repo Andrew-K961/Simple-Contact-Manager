@@ -64,7 +64,27 @@
             app:iconSpaceReserved="false"
             />
     </PreferenceCategory>
-
+    <PreferenceCategory app:title="@string/sheets_database"
+        app:iconSpaceReserved="false">
+        <SwitchPreferenceCompat
+            app:key="Enable Sheets"
+            app:title="@string/enable_sheets"
+            app:iconSpaceReserved="false"
+            app:defaultValue="false"
+            />
+        <EditTextPreference
+            android:defaultValue=""
+            android:key="Sheet Id"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/set_id"
+            app:iconSpaceReserved="false"/>
+        <Preference
+            app:key="test"
+            app:title="@string/upload_all"
+            app:iconSpaceReserved="false"
+        />
+    </PreferenceCategory>
    <!-- <PreferenceCategory app:title="@string/sync_header">
 
         <SwitchPreferenceCompat

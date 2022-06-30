@@ -53,7 +53,7 @@ public class Item {
         } else if (showLoctmp && !showQuantmp) {
             return name + "\n" + locationStr+ " " + location;
         } else if (showLoctmp) {
-            return name + "\n" + locationStr+ " " + location + "\n" + quantityStr + quantity;
+            return name + "\n" + locationStr+ " " + location + "\n" + quantityStr + " " + quantity;
         } else {
             return name;
         }

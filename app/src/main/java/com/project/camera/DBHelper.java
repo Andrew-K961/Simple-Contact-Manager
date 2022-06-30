@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class DBHelper extends SQLiteOpenHelper {
 
@@ -79,11 +80,6 @@ public class DBHelper extends SQLiteOpenHelper {
                 "where id=?", arg);
     }
 
-    public int numberOfRows(){
-        SQLiteDatabase db = this.getReadableDatabase();
-        return (int) DatabaseUtils.queryNumEntries(db, "people");
-    }
-
     public ArrayList<Person> getAllPeople() {
         ArrayList<Person> array_list = new ArrayList<>();
 
@@ -133,7 +129,7 @@ public class DBHelper extends SQLiteOpenHelper {
         return true;
     }
 
-    public boolean updateItem(Integer id, String name, String desc, String imagePath, int quantity, int location){
+    public boolean updateItem(int id, String name, String desc, String imagePath, int quantity, int location){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put("name", name);
@@ -206,6 +202,96 @@ public class DBHelper extends SQLiteOpenHelper {
         return array_list;
     }
 
+    public int numberOfItemRows(SQLiteDatabase db){
+        return (int) DatabaseUtils.queryNumEntries(db, "items");
+    }
+
+    public List<List<Object>> getItemsUpload() {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.rawQuery("select id, name, description, quantity, location, cryptographic_id, imagePath from items",
+                null);
+
+        List<List<Object>> result = new ArrayList<>();
+        cursor.moveToFirst();
+        for (int i = 0; i < cursor.getCount(); i++){
+            result.add(new ArrayList<>());
+            for (int j = 0; j <= 6; j++){
+                String column;
+                if (j == 4 && cursor.getInt(4) != -1){
+                    column = getLocation(cursor.getInt(4));
+                } else if (cursor.getString(j).equals("-1")){
+                    column = "";
+                } else {
+                    column = cursor.getString(j);
+                }
+                result.get(i).add(column);
+            }
+            cursor.moveToNext();
+        }
+        cursor.close();
+        db.close();
+        return result;
+    }
+
+    public void ReplaceAllItems (List<List<Object>> newList){
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        db.execSQL("DELETE FROM items");
+
+        for (int i = 0; i < newList.size(); i++){
+            ContentValues values= new ContentValues();
+            values.put("id", Integer.parseInt(newList.get(i).get(0).toString()));
+            values.put("name", newList.get(i).get(1).toString());
+            values.put("description", newList.get(i).get(2).toString());
+            values.put("quantity", newList.get(i).get(3).equals("") ? -1 : Integer.parseInt(newList.get(i).get(3).toString()));
+            values.put("location", newList.get(i).get(4).equals("") ? -1 : getIdFromLocation(newList.get(i).get(4).toString()));
+            values.put("cryptographic_id", Integer.parseInt(newList.get(i).get(5).toString()));
+            if (newList.get(i).size() > 6){
+                values.put("imagePath", newList.get(i).get(6).toString());
+            } else {
+                values.put("imagePath", "");
+            }
+            db.insert("items", null, values);
+        }
+        db.close();
+    }
+
+    public int getLastId () {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.rawQuery("SELECT MAX(id) FROM items", null);
+
+        cursor.moveToFirst();
+        int result = cursor.getInt(0);
+
+        cursor.close();
+        db.close();
+        return result;
+    }
+
+    public List<List<Object>> getRowForUpload (int id){
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.rawQuery("select name, description, quantity, location, cryptographic_id, imagePath from items where id = ?",
+                new String[] { String.valueOf(id) });
+
+        cursor.moveToFirst();
+        List<List<Object>> result = new ArrayList<>();
+        result.add(new ArrayList<>());
+        for (int i = 0; i < 6; i++){
+            if (i == 3){
+                result.get(0).add(getLocation(cursor.getInt(i)));
+            } else {
+                result.get(0).add(cursor.getString(i));
+            }
+        }
+
+        cursor.close();
+        db.close();
+        return result;
+    }
+
 //************ Generic
 
     public boolean checkForCollision(int cryptoId, boolean item){
@@ -270,6 +356,8 @@ public class DBHelper extends SQLiteOpenHelper {
         return result;
     }
 
+    //**************** Location
+
     public boolean checkLocationInUse (int Id) {
         SQLiteDatabase db = this.getReadableDatabase();
 
@@ -285,8 +373,6 @@ public class DBHelper extends SQLiteOpenHelper {
             return false;
         }
     }
-
-    //**************** Location
 
     public void insertLocation (String location){
         SQLiteDatabase db = this.getWritableDatabase();
@@ -350,19 +436,21 @@ public class DBHelper extends SQLiteOpenHelper {
         int result = cursor.getInt(0);
 
         cursor.close();
-        db.close();
         return result;
     }
 
     public String getLocation (int id) {
         SQLiteDatabase db = this.getReadableDatabase();
 
+        if (id == -1){
+            return "";
+        }
+
         Cursor cursor = db.rawQuery("select location from locations where id = ?", new String[] { String.valueOf(id) });
         cursor.moveToFirst();
         String result = cursor.getString(0);
 
         cursor.close();
-        db.close();
         return result;
     }
 }
