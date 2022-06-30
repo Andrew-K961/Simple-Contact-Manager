@@ -4,12 +4,20 @@ import java.util.Comparator;
 
 public class Item {
 
-    int id;
-    String name;
+    private int id;
+    private String name;
+    private int quantity;
+    private String location;
+    public static boolean showQuantity;
+    public static boolean showLocation;
+    public static String quantityStr;
+    public static String locationStr;
 
-    public Item (int id, String name) {
+    public Item (int id, String name, int quantity, String location) {
         this.id = id;
         this.name = name;
+        this.quantity = quantity;
+        this.location = location;
     }
 
     public void setId(int id) {
@@ -20,6 +28,10 @@ public class Item {
         this.name = name;
     }
 
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
     public int getId() {
         return id;
     }
@@ -28,8 +40,23 @@ public class Item {
         return name;
     }
 
+    public int getQuantity() {
+        return quantity;
+    }
+
     public String toString (){
-        return name;
+        boolean showQuantmp = quantity != -1 && showQuantity;
+        boolean showLoctmp = !location.equals("-1") && showLocation;
+
+        if (showQuantmp && !showLoctmp){
+            return name + "\n" + quantityStr+ " " + quantity;
+        } else if (showLoctmp && !showQuantmp) {
+            return name + "\n" + locationStr+ " " + location;
+        } else if (showLoctmp) {
+            return name + "\n" + locationStr+ " " + location + "\n" + quantityStr + quantity;
+        } else {
+            return name;
+        }
     }
 
     public static Comparator<Item> NameSort = (p1, p2) -> {

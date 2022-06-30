@@ -49,6 +49,10 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
 
         settings = PreferenceManager.getDefaultSharedPreferences(this);
         mode = settings.getString("app_mode", "mode1");
+        Item.showQuantity = settings.getBoolean("show quantity", true);
+        Item.showLocation = settings.getBoolean("show location", true);
+        Item.quantityStr = getString(R.string.quantity_colon);
+        Item.locationStr = getString(R.string.location_colon);
 
 //************** Initiate Buttons
 
@@ -130,7 +134,17 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
     @Override
     protected void onRestart() {
         super.onRestart();
-        this.recreate();
+        if (mode.equals("mode2")) {
+            itemArrayList.clear();
+            itemArrayList.addAll(database.getAllItems());
+            Collections.reverse(itemArrayList);
+            itemArrayAdapter.notifyDataSetChanged();
+        } else {
+            personArrayList.clear();
+            personArrayList.addAll(database.getAllPeople());
+            Collections.reverse(personArrayList);
+            personArrayAdapter.notifyDataSetChanged();
+        }
     }
 
     @Override

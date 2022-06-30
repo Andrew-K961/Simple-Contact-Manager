@@ -93,7 +93,6 @@
             android:windowSoftInputMode="adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
@@ -101,6 +100,14 @@
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
         </activity>
+        <activity
+            android:name=".LocationsEditor"
+            android:exported="false"
+            android:parentActivityName=".Settings"
+            android:screenOrientation="nosensor"/>
+            <meta-data
+            android:name="android.support.PARENT_ACTIVITY"
+            android:value=".Settings" />
     </application>
 
 </manifest>

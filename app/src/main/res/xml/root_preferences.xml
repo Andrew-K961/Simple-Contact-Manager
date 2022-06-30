@@ -1,7 +1,8 @@
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory app:title="@string/general_header">
-
+    <PreferenceCategory app:title="@string/general_header"
+        app:iconSpaceReserved="false">
         <!--<EditTextPreference
             app:key="signature"
             app:title="@string/signature_title"
@@ -13,14 +14,55 @@
             app:entryValues="@array/mode_values"
             app:key="app_mode"
             app:title="@string/app_mode"
-            app:useSimpleSummaryProvider="true" />
+            app:useSimpleSummaryProvider="true"
+            app:iconSpaceReserved="false"/>
+
+        <SeekBarPreference
+            app:title="@string/image_quality"
+            app:min="3"
+            app:seekBarIncrement="1"
+            android:max="10"
+            app:defaultValue="6"
+            app:key="image quality"
+            app:adjustable="true"
+            app:isPreferenceVisible="true"
+            app:showSeekBarValue="true"
+            app:summary="@string/image_quality_summary"
+            app:iconSpaceReserved="false"
+            />
+    </PreferenceCategory>
+    <PreferenceCategory app:title="@string/mode_inventory"
+        app:iconSpaceReserved="false">
 
         <SwitchPreferenceCompat
-            app:key="photo_required"
-            app:title="@string/require_photo"
-            app:summary="Doesn't work yet"
-            app:defaultValue="true"/>
+            app:key="show quantity"
+            app:title="@string/show_quantity"
+            app:defaultValue="true"
+            app:iconSpaceReserved="false"/>
 
+        <SwitchPreferenceCompat
+            app:key="show location"
+            app:title="@string/show_location"
+            app:defaultValue="true"
+            app:iconSpaceReserved="false"/>
+
+        <SwitchPreferenceCompat
+            app:key="quantity default"
+            app:title="@string/quantity_default"
+            app:defaultValue="false"
+            app:iconSpaceReserved="false"/>
+
+        <SwitchPreferenceCompat
+            app:key="location default"
+            app:title="@string/location_default"
+            app:defaultValue="false"
+            app:iconSpaceReserved="false"/>
+
+        <Preference
+            app:key="edit locations"
+            app:title="@string/edit_locations"
+            app:iconSpaceReserved="false"
+            />
     </PreferenceCategory>
 
    <!-- <PreferenceCategory app:title="@string/sync_header">

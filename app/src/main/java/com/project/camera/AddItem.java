@@ -2,6 +2,7 @@ package com.project.camera;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -11,7 +12,11 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,6 +24,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
+import androidx.preference.PreferenceManager;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
@@ -27,6 +33,7 @@ import java.io.File;
 import java.io.IOException;
 import java.security.SecureRandom;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
@@ -46,6 +53,14 @@ public class AddItem extends AppCompatActivity {
     private TextInputLayout descLayout;
     private Button addButton;
     private Bundle extras;
+    private CheckBox quantityCheck;
+    private EditText quantityEditText;
+    private Spinner locationSpinner;
+    private CheckBox locationCheck;
+    SharedPreferences settings;
+    private boolean quantityOn;
+    private boolean locationOn;
+    private boolean added = false;
 
     TextWatcher nameWatcher = new TextWatcher() {
         @Override
@@ -111,8 +126,13 @@ public class AddItem extends AppCompatActivity {
         descLayout = findViewById(R.id.descLayout);
         imagePath = findViewById(R.id.imagePath);
         addButton = findViewById(R.id.addItem);
+        quantityCheck = findViewById(R.id.checkBox);
+        quantityEditText = findViewById(R.id.editTextNumberSigned);
+        locationSpinner = findViewById(R.id.location_chooser);
+        locationCheck = findViewById(R.id.checkBox2);
         extras = getIntent().getExtras();
         String originActivity = extras.getString("Activity_Origin");
+        settings = PreferenceManager.getDefaultSharedPreferences(this);
 
         nameEditText.addTextChangedListener(nameWatcher);
         descEditText.addTextChangedListener(descWatcher);
@@ -126,28 +146,93 @@ public class AddItem extends AppCompatActivity {
         }
     }
 
+    private void quantityOnClick (View view) {
+        if (quantityCheck.isChecked()){
+            quantityEditText.setVisibility(View.VISIBLE);
+            quantityOn = true;
+        } else {
+            quantityEditText.setVisibility(View.INVISIBLE);
+            quantityOn = false;
+        }
+    }
+
+    private void locationOnClick (View v) {
+        if (locationCheck.isChecked()){
+            locationSpinner.setVisibility(View.VISIBLE);
+            locationOn = true;
+        } else {
+            locationSpinner.setVisibility(View.INVISIBLE);
+            locationOn = false;
+        }
+    }
+
     private void addSetup() {
+        quantityOn = settings.getBoolean("quantity default", false);
+        locationOn = settings.getBoolean("location default", false);
+        ArrayAdapter<String> arrayAdapter =
+                new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, database.getLocationsString());
+
+        if (quantityOn){
+            quantityCheck.setChecked(true);
+        } else {
+            quantityCheck.setChecked(false);
+            quantityEditText.setVisibility(View.INVISIBLE);
+        }
+
+        locationSpinner.setAdapter(arrayAdapter);
+        if (locationOn){
+            locationCheck.setChecked(true);
+        } else {
+            locationCheck.setChecked(false);
+            locationSpinner.setVisibility(View.INVISIBLE);
+        }
+
+        quantityCheck.setOnClickListener(this::quantityOnClick);
+        locationCheck.setOnClickListener(this::locationOnClick);
+
         addButton.setOnClickListener(v -> {
             Context context = getApplicationContext();
             int duration = Toast.LENGTH_LONG;
             String name = Objects.requireNonNull(nameEditText.getText()).toString();
             String desc = Objects.requireNonNull(descEditText.getText()).toString();
+            String S_quantity = quantityEditText.getText().toString();
+            int quantity;
+            int location;
+
+            if (!S_quantity.equals("") && quantityOn){
+                try {
+                    quantity = Integer.parseInt(S_quantity);
+                } catch (NumberFormatException e){
+                    Toast.makeText(context, R.string.quantity_warning, duration).show();
+                    return;
+                }
+            } else {
+                quantity = -1;
+            }
+            if (locationOn){
+                location = database.getIdFromLocation((String) locationSpinner.getSelectedItem());
+            } else {
+                location = -1;
+            }
 
             if (validate(name, true) || validate(desc, false) || desc.length() < 2) {
-                Toast toast = Toast.makeText(context, R.string.input_warning2, duration);
-                toast.show();
-            } else if (currentPhotoPath == null) {
-                Toast toast = Toast.makeText(context, R.string.image_warning, duration);
-                toast.show();
+                Toast.makeText(context, R.string.input_warning2, duration).show();
+            } else if (quantityOn && quantity < 0){
+                Toast.makeText(context, R.string.quantity_warning, duration).show();
             } else {
+                if (currentPhotoPath == null){
+                    currentPhotoPath = "";
+                }
+
                 SecureRandom random = new SecureRandom();
                 int cryptoId = random.nextInt();
                 while (database.checkForCollision(cryptoId, true) || cryptoId == -1) {
                     cryptoId = random.nextInt();
                 }
-                if (database.insertItem(cryptoId, name, desc, currentPhotoPath)) {
+                if (database.insertItem(cryptoId, name, desc, currentPhotoPath, quantity, location)) {
                     Toast toast = Toast.makeText(context, R.string.add_success2, duration);
                     toast.show();
+                    added = true;
                 }
                 finish();
             }
@@ -155,35 +240,93 @@ public class AddItem extends AppCompatActivity {
     }
 
     private void editSetup() {
+        added = true;
         addButton.setText(R.string.update);
         String currentName = extras.getString("Name");
         String currentDesc = extras.getString("Desc");
         String currentImage = extras.getString("Image");
+        int currentQuantity = extras.getInt("Quantity");
+        String currentLocation = extras.getString("Location");
         currentPhotoPath = currentImage;
         nameEditText.setText(currentName);
         descEditText.setText(currentDesc);
-        String formatted = getString(R.string.image_path1, currentImage);
+        String formatted;
+
+        if (currentQuantity != -1){
+            quantityEditText.setText(String.valueOf(currentQuantity));
+            quantityEditText.setVisibility(View.VISIBLE);
+            quantityOn = true;
+            quantityCheck.setChecked(true);
+        } else {
+            quantityEditText.setVisibility(View.INVISIBLE);
+            quantityOn = false;
+            quantityCheck.setChecked(false);
+        }
+        if (currentLocation.equals("-1")){
+            locationOn = false;
+            locationCheck.setChecked(false);
+            locationSpinner.setVisibility(View.INVISIBLE);
+        } else {
+            locationOn = true;
+            locationCheck.setChecked(true);
+            locationSpinner.setVisibility(View.VISIBLE);
+            ArrayList<String> list = new ArrayList<>(database.getLocationsString());
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, list);
+            locationSpinner.setAdapter(adapter);
+            int select = 1;
+            for (int i = 0; i < list.size(); i++){
+                if (list.get(i).equals(currentLocation)){
+                    select = i;
+                }
+            }
+            locationSpinner.setSelection(select);
+        }
+
+        if (Objects.equals(currentImage, "")){
+            formatted = getString(R.string.image_path2);
+        } else {
+            formatted = getString(R.string.image_path1, currentImage);
+        }
         imagePath.setText(formatted);
+
+        quantityCheck.setOnClickListener(this::quantityOnClick);
 
         addButton.setOnClickListener(v -> {
             Context context = getApplicationContext();
             int duration = Toast.LENGTH_LONG;
             String name = Objects.requireNonNull(nameEditText.getText()).toString();
             String desc = Objects.requireNonNull(descEditText.getText()).toString();
+            String S_quantity = quantityEditText.getText().toString();
+            int location;
+            int quantity;
 
+            if (!S_quantity.equals("") && quantityOn){
+                try {
+                    quantity = Integer.parseInt(S_quantity);
+                } catch (NumberFormatException e){
+                    Toast.makeText(context, R.string.quantity_warning, duration).show();
+                    return;
+                }
+            } else {
+                quantity = -1;
+            }
+            if (locationOn){
+                location = database.getIdFromLocation((String) locationSpinner.getSelectedItem());
+            } else {
+                location = -1;
+            }
 
             if (validate(name, true) || validate(desc, false)) {
                 Toast toast = Toast.makeText(context, R.string.input_warning2, duration);
                 toast.show();
-            } else if (currentPhotoPath == null) {
-                Toast toast = Toast.makeText(context, R.string.image_warning, duration);
-                toast.show();
+            } else if (quantityOn && quantity < 0){
+                Toast.makeText(context, R.string.quantity_warning, duration).show();
             } else {
-                if(!(currentPhotoPath.equals(currentImage))){
+                if(!Objects.equals(currentImage, currentPhotoPath) && !Objects.equals(currentImage, "")){
                     File oldImage = new File(currentImage);
                     oldImage.delete();
                 }
-                if (database.updateItem(extras.getInt("id"), name, desc, currentPhotoPath)) {
+                if (database.updateItem(extras.getInt("id"), name, desc, currentPhotoPath, quantity, location)) {
                     Toast toast = Toast.makeText(context, R.string.edit_success2, duration);
                     toast.show();
                 }
@@ -218,6 +361,7 @@ public class AddItem extends AppCompatActivity {
             } catch (IOException ex) {
                 // Error occurred while creating the File
                 ex.printStackTrace();
+                Toast.makeText(this, R.string.error0, Toast.LENGTH_LONG).show();
             }
             // Continue only if the File was successfully created
             if (photoFile != null) {
@@ -272,5 +416,16 @@ public class AddItem extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onStop (){
+        super.onStop();
+        if (currentPhotoPath != null && !added){
+            File pic = new File(currentPhotoPath);
+            if (pic.exists()){
+                pic.delete();
+            }
+        }
     }
 }

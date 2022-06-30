@@ -22,6 +22,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.PreferenceManager;
 
@@ -77,6 +78,10 @@ public class NFC extends AppCompatActivity {
         crypto_id = findViewById(R.id.cryptoId);
         button = findViewById(R.id.button2);
         db = new DBHelper(this);
+
+        ActionBar actionBar = getSupportActionBar();
+        assert actionBar != null;
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
         settings = PreferenceManager.getDefaultSharedPreferences(this);
         itemMode = !settings.getString("app_mode", "mode1").equals("mode1");

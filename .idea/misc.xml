@@ -7,14 +7,16 @@
         <entry key="..\:/Andriod Projects/Camera/app/src/main/res/drawable/ic_baseline_settings_24.xml" value="0.2075" />
         <entry key="..\:/Andriod Projects/Camera/app/src/main/res/drawable/ic_nfc.xml" value="0.24375" />
         <entry key="..\:/Andriod Projects/Camera/app/src/main/res/drawable/ic_test.xml" value="0.1234375" />
-        <entry key="..\:/Andriod Projects/Camera/app/src/main/res/layout/activity_add_item.xml" value="0.264" />
+        <entry key="..\:/Andriod Projects/Camera/app/src/main/res/layout/activity_add_item.xml" value="0.4" />
         <entry key="..\:/Andriod Projects/Camera/app/src/main/res/layout/activity_add_person.xml" value="0.221875" />
         <entry key="..\:/Andriod Projects/Camera/app/src/main/res/layout/activity_contact_chooser.xml" value="0.2" />
         <entry key="..\:/Andriod Projects/Camera/app/src/main/res/layout/activity_display_contact.xml" value="0.264" />
-        <entry key="..\:/Andriod Projects/Camera/app/src/main/res/layout/activity_display_item.xml" value="0.264" />
+        <entry key="..\:/Andriod Projects/Camera/app/src/main/res/layout/activity_display_item.xml" value="0.4" />
+        <entry key="..\:/Andriod Projects/Camera/app/src/main/res/layout/activity_locations_editor.xml" value="0.2" />
         <entry key="..\:/Andriod Projects/Camera/app/src/main/res/layout/activity_main.xml" value="0.264" />
         <entry key="..\:/Andriod Projects/Camera/app/src/main/res/layout/activity_nfc.xml" value="0.536" />
         <entry key="..\:/Andriod Projects/Camera/app/src/main/res/layout/activity_nfc_read.xml" value="0.20380434782608695" />
+        <entry key="..\:/Andriod Projects/Camera/app/src/main/res/layout/custom_listview.xml" value="0.264" />
         <entry key="..\:/Andriod Projects/Camera/app/src/main/res/layout/fragment_nfc.xml" value="0.2033514492753623" />
         <entry key="..\:/Andriod Projects/Camera/app/src/main/res/layout/settings_activity.xml" value="0.221875" />
         <entry key="..\:/Andriod Projects/Camera/app/src/main/res/menu/settings_button.xml" value="0.221875" />
