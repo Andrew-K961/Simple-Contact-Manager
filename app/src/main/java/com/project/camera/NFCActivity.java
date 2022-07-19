@@ -30,7 +30,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Objects;
 
-public class NFC extends AppCompatActivity {
+public class NFCActivity extends AppCompatActivity {
 
     private DBHelper db;
     private TextView mode;

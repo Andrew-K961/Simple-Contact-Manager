@@ -15,37 +15,37 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 
-public class LocationsEditor extends AppCompatActivity {
+public class TypesEditor extends AppCompatActivity {
 
-    private ArrayList<Item> locationList;
+    private ArrayList<Item> typeList;
     private CustomAdapter arrayAdapter;
     private DBHelper database;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_locations_editor);
+        setContentView(R.layout.activity_types_editor);
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            actionBar.setTitle(R.string.edit_locations);
+            actionBar.setTitle(R.string.edit_types);
         }
 
         database = new DBHelper(this);
-        FloatingActionButton addBtn = findViewById(R.id.floatingActionButton);
-        ListView listView = findViewById(R.id.location_list);
+        FloatingActionButton addBtn = findViewById(R.id.add_type);
+        ListView listView = findViewById(R.id.types_list);
 
-        locationList = database.getAllLocations();
-        arrayAdapter = new CustomAdapter(locationList, this, true);
+        typeList = database.getTypes();
+        arrayAdapter = new CustomAdapter(typeList, this, false);
         listView.setAdapter(arrayAdapter);
         arrayAdapter.notifyDataSetChanged();
 
-        addBtn.setOnClickListener(this::addLocation);
+        addBtn.setOnClickListener(this::addType);
     }
 
-    public void addLocation (View view){
+    public void addType (View view){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(getText(R.string.add_location));
+        builder.setTitle(getText(R.string.add_type));
 
 // Set up the input
         final EditText input = new EditText(this);
@@ -55,10 +55,10 @@ public class LocationsEditor extends AppCompatActivity {
 
 // Set up the buttons
         builder.setPositiveButton(getText(R.string.add), (dialog, which) -> {
-            database.insertLocation(input.getText().toString());
+            database.insertType(input.getText().toString());
             input.clearFocus();
-            locationList.clear();
-            locationList.addAll(database.getAllLocations());
+            typeList.clear();
+            typeList.addAll(database.getTypes());
             arrayAdapter.notifyDataSetChanged();
             dialog.cancel();
         });
