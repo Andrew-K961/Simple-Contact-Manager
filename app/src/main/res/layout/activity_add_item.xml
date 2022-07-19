@@ -21,6 +21,8 @@
         android:id="@+id/imagePath"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginLeft="4dp"
         android:text="@string/image_path2"
         android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@+id/addItem"
@@ -28,7 +30,7 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/descLayout"
-        app:layout_constraintVertical_bias="0.6" />
+        app:layout_constraintVertical_bias="0.86" />
 
     <ImageButton
         android:id="@+id/takePicture"
@@ -92,7 +94,6 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/nameLayout"
-        app:placeholderText="@string/required"
         tools:ignore="TextContrastCheck">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -135,8 +136,8 @@
         android:layout_height="wrap_content"
         android:ems="15"
         android:inputType="numberSigned"
-        app:layout_constraintBottom_toTopOf="@+id/imagePath"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/type_chooser"
+        app:layout_constraintEnd_toStartOf="@+id/checkBox2"
         app:layout_constraintHorizontal_bias="0.05"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editTextNumberSigned" />
@@ -151,5 +152,26 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/checkBox"
         app:layout_constraintTop_toTopOf="@+id/location_chooser" />
+
+    <Spinner
+        android:id="@+id/type_chooser"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/takePicture"
+        app:layout_constraintEnd_toStartOf="@+id/type_checkBox"
+        app:layout_constraintHorizontal_bias="0.05"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/location_chooser" />
+
+    <CheckBox
+        android:id="@+id/type_checkBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/enable_type"
+        app:layout_constraintBottom_toBottomOf="@+id/type_chooser"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/checkBox2"
+        app:layout_constraintTop_toTopOf="@+id/type_chooser" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

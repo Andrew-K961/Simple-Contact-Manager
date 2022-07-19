@@ -8,8 +8,8 @@ android {
         minSdkVersion 16
         targetSdkVersion 32
         multiDexEnabled true
-        versionCode 10
-        versionName '1.3'
+        versionCode 12
+        versionName '1.3.2'
         android.defaultConfig.vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         versionNameSuffix 'release'

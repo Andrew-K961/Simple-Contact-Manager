@@ -41,18 +41,20 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
     private boolean searchState;
     private boolean threadFinished = false;
     private String mode;
+    private SharedPreferences settings;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+        settings = PreferenceManager.getDefaultSharedPreferences(this);
         mode = settings.getString("app_mode", "mode1");
-        Item.showQuantity = settings.getBoolean("show quantity", true);
-        Item.showLocation = settings.getBoolean("show location", true);
-        Item.quantityStr = getString(R.string.quantity_colon);
-        Item.locationStr = getString(R.string.location_colon);
+
+        Item.setVars(settings.getBoolean("show quantity", true), settings.getBoolean("show location", true),
+                settings.getBoolean("show type", true), getString(R.string.quantity_colon),
+                getString(R.string.location_colon), getString(R.string.type_colon));
+
         database = new DBHelper(getApplicationContext());
         ListView listView = findViewById(R.id.listView);
 
@@ -69,6 +71,7 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
             itemArrayList = database.getAllItems();
             itemArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, itemArrayList);
             listView.setAdapter(itemArrayAdapter);
+            threadFinished = true;
         }
 
 //************** Initiate Buttons
@@ -207,8 +210,10 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
     @Override
     public void onItemSelected(@NonNull AdapterView<?> parent, View view, int position, long id) {
         String selected = parent.getItemAtPosition(position).toString();
-        String recents = getResources().getString(R.string.recents);
-        String name = getResources().getString(R.string.hint1);
+        String recents = getString(R.string.recents);
+        String name = getString(R.string.hint1);
+        String location = getString(R.string.location);
+        String type = getString(R.string.type);
         if (mode.equals("mode1")) {
             if (selected.equals(recents)) {
                 Collections.sort(personArrayList, Person.IdSort);
@@ -221,6 +226,10 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
         } else if (threadFinished){
             if (selected.equals(recents)) {
                 Collections.sort(itemArrayList, Item.IdSort);
+            } else if (selected.equals(location)){
+                Collections.sort(itemArrayList, Item.LocationSort);
+            } else if (selected.equals(type)){
+                Collections.sort(itemArrayList, Item.TypeSort);
             } else {
                 Collections.sort(itemArrayList, Item.NameSort);
             }
@@ -265,15 +274,28 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.settings_button, menu);
+        if (settings.getBoolean("Enable Sheets", false)){
+            getMenuInflater().inflate(R.menu.bar_buttons1, menu);
+        } else {
+            getMenuInflater().inflate(R.menu.bar_buttons2, menu);
+        }
         // first parameter is the file for icon and second one is menu
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        Intent intent = new Intent(getApplicationContext(), Settings.class);
-        startActivity(intent);
+        if (item.getTitle().equals(getText(R.string.title_activity_settings))){
+            Intent intent = new Intent(this, Settings.class);
+            startActivity(intent);
+        } else if (item.getTitle().equals(getText(R.string.sync))){
+            NotifyingThread sync = new NetworkingThreads.GetAllFromCloud();
+            sync.setName("Sync");
+            sync.addListener(this);
+            sync.start();
+            Toast.makeText(this, R.string.syncing, Toast.LENGTH_LONG).show();
+        }
+
         return super.onOptionsItemSelected(item);
     }
 
@@ -290,6 +312,15 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
                 Collections.reverse(itemArrayList);
                 itemArrayAdapter.notifyDataSetChanged();
                 threadFinished = true;
+            });
+        } else if (thread.getName().equals("Sync")){
+            runOnUiThread(() -> {
+                itemArrayList.clear();
+                itemArrayList.addAll(database.getAllItems());
+                Collections.reverse(itemArrayList);
+                itemArrayAdapter.notifyDataSetChanged();
+                threadFinished = true;
+                Toast.makeText(this, R.string.sync_complete, Toast.LENGTH_SHORT).show();
             });
         }
     }

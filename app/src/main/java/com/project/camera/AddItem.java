@@ -59,9 +59,12 @@ public class AddItem extends AppCompatActivity {
     private EditText quantityEditText;
     private Spinner locationSpinner;
     private CheckBox locationCheck;
+    private Spinner typeSpinner;
+    private CheckBox typeCheck;
     SharedPreferences settings;
     private boolean quantityOn;
     private boolean locationOn;
+    private boolean typeOn;
     private boolean added = false;
 
     TextWatcher nameWatcher = new TextWatcher() {
@@ -94,10 +97,7 @@ public class AddItem extends AppCompatActivity {
         }
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            if(s.length() == 0 || s.length() == 1) {
-                String descWarning = getString(R.string.desc_warning);
-                descLayout.setError(descWarning);
-            } else if(validate(s.toString(), false)) {
+            if(validate(s.toString(), false)) {
                 String descWarning = getString(R.string.desc_warning2);
                 descLayout.setError(descWarning);
             } else {
@@ -132,6 +132,8 @@ public class AddItem extends AppCompatActivity {
         quantityEditText = findViewById(R.id.editTextNumberSigned);
         locationSpinner = findViewById(R.id.location_chooser);
         locationCheck = findViewById(R.id.checkBox2);
+        typeSpinner = findViewById(R.id.type_chooser);
+        typeCheck = findViewById(R.id.type_checkBox);
         extras = getIntent().getExtras();
         String originActivity = extras.getString("Activity_Origin");
         settings = PreferenceManager.getDefaultSharedPreferences(this);
@@ -168,11 +170,25 @@ public class AddItem extends AppCompatActivity {
         }
     }
 
+    private void typeOnClick (View v) {
+        if (typeCheck.isChecked()){
+            typeSpinner.setVisibility(View.VISIBLE);
+            typeOn = true;
+        } else {
+            typeSpinner.setVisibility(View.INVISIBLE);
+            typeOn = false;
+        }
+    }
+
     private void addSetup() {
         quantityOn = settings.getBoolean("quantity default", false);
         locationOn = settings.getBoolean("location default", false);
-        ArrayAdapter<String> arrayAdapter =
+        typeOn = settings.getBoolean("type default", false);
+
+        ArrayAdapter<String> locationAdapter =
                 new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, database.getLocationsString());
+        ArrayAdapter<String> typeAdapter =
+                new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, database.getTypesString());
 
         if (quantityOn){
             quantityCheck.setChecked(true);
@@ -181,7 +197,7 @@ public class AddItem extends AppCompatActivity {
             quantityEditText.setVisibility(View.INVISIBLE);
         }
 
-        locationSpinner.setAdapter(arrayAdapter);
+        locationSpinner.setAdapter(locationAdapter);
         if (locationOn){
             locationCheck.setChecked(true);
         } else {
@@ -189,8 +205,17 @@ public class AddItem extends AppCompatActivity {
             locationSpinner.setVisibility(View.INVISIBLE);
         }
 
+        typeSpinner.setAdapter(typeAdapter);
+        if (typeOn){
+            typeCheck.setChecked(true);
+        } else {
+            typeCheck.setChecked(false);
+            typeSpinner.setVisibility(View.INVISIBLE);
+        }
+
         quantityCheck.setOnClickListener(this::quantityOnClick);
         locationCheck.setOnClickListener(this::locationOnClick);
+        typeCheck.setOnClickListener(this::typeOnClick);
 
         addButton.setOnClickListener(v -> {
             Context context = getApplicationContext();
@@ -200,6 +225,7 @@ public class AddItem extends AppCompatActivity {
             String S_quantity = quantityEditText.getText().toString();
             int quantity;
             int location;
+            String type;
 
             if (!S_quantity.equals("") && quantityOn){
                 try {
@@ -211,13 +237,18 @@ public class AddItem extends AppCompatActivity {
             } else {
                 quantity = -1;
             }
-            if (locationOn){
+            if (locationOn && locationSpinner.getSelectedItem() != null){
                 location = database.getIdFromLocation((String) locationSpinner.getSelectedItem());
             } else {
                 location = -1;
             }
+            if (typeOn && typeSpinner.getSelectedItem() != null){
+                type = (String) typeSpinner.getSelectedItem();
+            } else {
+                type = "-1";
+            }
 
-            if (validate(name, true) || validate(desc, false) || desc.length() < 2) {
+            if (validate(name, true) || validate(desc, false)) {
                 Toast.makeText(context, R.string.input_warning2, duration).show();
             } else if (quantityOn && quantity < 0){
                 Toast.makeText(context, R.string.quantity_warning, duration).show();
@@ -231,10 +262,11 @@ public class AddItem extends AppCompatActivity {
                 while (database.checkForCollision(cryptoId, true) || cryptoId == -1) {
                     cryptoId = random.nextInt();
                 }
-                if (database.insertItem(cryptoId, name, desc, currentPhotoPath, quantity, location)) {
+                if (database.insertItem(cryptoId, name, desc, currentPhotoPath, quantity, location, type)) {
                     if (settings.getBoolean("Enable Sheets", false)){
                         NotifyingThread add = new NetworkingThreads.AddRow(Collections.singletonList(Arrays.asList(
-                                database.getLastId(), name, desc, quantity, database.getLocation(location), cryptoId, currentPhotoPath)));
+                                database.getLastId(), name, desc, quantity == -1 ? "" : quantity,
+                                database.getLocation(location), type, cryptoId, currentPhotoPath)));
                         add.start();
                     }
                     Toast toast = Toast.makeText(context, R.string.add_success2, duration);
@@ -254,10 +286,19 @@ public class AddItem extends AppCompatActivity {
         String currentImage = extras.getString("Image");
         int currentQuantity = extras.getInt("Quantity");
         String currentLocation = extras.getString("Location");
+        String currentType = extras.getString("Type");
         currentPhotoPath = currentImage;
         nameEditText.setText(currentName);
         descEditText.setText(currentDesc);
         String formatted;
+
+        ArrayList<String> locList = new ArrayList<>(database.getLocationsString());
+        ArrayAdapter<String> locAdapter = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, locList);
+        locationSpinner.setAdapter(locAdapter);
+
+        ArrayList<String> typeList = new ArrayList<>(database.getTypesString());
+        ArrayAdapter<String> typeAdapter = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, typeList);
+        typeSpinner.setAdapter(typeAdapter);
 
         if (currentQuantity != -1){
             quantityEditText.setText(String.valueOf(currentQuantity));
@@ -269,7 +310,7 @@ public class AddItem extends AppCompatActivity {
             quantityOn = false;
             quantityCheck.setChecked(false);
         }
-        if (currentLocation.equals("-1")){
+        if (currentLocation.equals("-1") || currentLocation.equals("")){
             locationOn = false;
             locationCheck.setChecked(false);
             locationSpinner.setVisibility(View.INVISIBLE);
@@ -277,16 +318,28 @@ public class AddItem extends AppCompatActivity {
             locationOn = true;
             locationCheck.setChecked(true);
             locationSpinner.setVisibility(View.VISIBLE);
-            ArrayList<String> list = new ArrayList<>(database.getLocationsString());
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, list);
-            locationSpinner.setAdapter(adapter);
             int select = 1;
-            for (int i = 0; i < list.size(); i++){
-                if (list.get(i).equals(currentLocation)){
+            for (int i = 0; i < locList.size(); i++){
+                if (locList.get(i).equals(currentLocation)){
                     select = i;
                 }
             }
             locationSpinner.setSelection(select);
+        }
+        if (currentType.equals("-1")){
+            typeOn = false;
+            typeCheck.setChecked(false);
+            typeSpinner.setVisibility(View.INVISIBLE);
+        } else {
+            typeOn = true;
+            typeCheck.setChecked(true);
+            int select = 1;
+            for (int i = 0; i < typeList.size(); i++){
+                if (typeList.get(i).equals(currentType)){
+                    select = i;
+                }
+            }
+            typeSpinner.setSelection(select);
         }
 
         if (Objects.equals(currentImage, "")){
@@ -297,6 +350,8 @@ public class AddItem extends AppCompatActivity {
         imagePath.setText(formatted);
 
         quantityCheck.setOnClickListener(this::quantityOnClick);
+        locationCheck.setOnClickListener(this::locationOnClick);
+        typeCheck.setOnClickListener(this::typeOnClick);
 
         addButton.setOnClickListener(v -> {
             Context context = getApplicationContext();
@@ -306,6 +361,7 @@ public class AddItem extends AppCompatActivity {
             String S_quantity = quantityEditText.getText().toString();
             int location;
             int quantity;
+            String type;
 
             if (!S_quantity.equals("") && quantityOn){
                 try {
@@ -322,6 +378,11 @@ public class AddItem extends AppCompatActivity {
             } else {
                 location = -1;
             }
+            if (typeOn && typeSpinner.getSelectedItem() != null){
+                type = (String) typeSpinner.getSelectedItem();
+            } else {
+                type = "-1";
+            }
 
             if (validate(name, true) || validate(desc, false)) {
                 Toast toast = Toast.makeText(context, R.string.input_warning2, duration);
@@ -333,7 +394,7 @@ public class AddItem extends AppCompatActivity {
                     File oldImage = new File(currentImage);
                     oldImage.delete();
                 }
-                if (database.updateItem(extras.getInt("id"), name, desc, currentPhotoPath, quantity, location)) {
+                if (database.updateItem(extras.getInt("id"), name, desc, currentPhotoPath, quantity, location, type)) {
                     if (settings.getBoolean("Enable Sheets", false)){
                         NotifyingThread update = new NetworkingThreads.EditRow(extras.getInt("id"));
                         update.start();

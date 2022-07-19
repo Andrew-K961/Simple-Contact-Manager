@@ -47,6 +47,12 @@
             app:iconSpaceReserved="false"/>
 
         <SwitchPreferenceCompat
+            app:key="show type"
+            app:title="@string/show_type"
+            app:defaultValue="true"
+            app:iconSpaceReserved="false"/>
+
+        <SwitchPreferenceCompat
             app:key="quantity default"
             app:title="@string/quantity_default"
             app:defaultValue="false"
@@ -58,9 +64,21 @@
             app:defaultValue="false"
             app:iconSpaceReserved="false"/>
 
+        <SwitchPreferenceCompat
+            app:key="type default"
+            app:title="@string/type_default"
+            app:defaultValue="false"
+            app:iconSpaceReserved="false"/>
+
         <Preference
             app:key="edit locations"
             app:title="@string/edit_locations"
+            app:iconSpaceReserved="false"
+            />
+
+        <Preference
+            app:key="edit types"
+            app:title="@string/edit_types"
             app:iconSpaceReserved="false"
             />
     </PreferenceCategory>
@@ -79,6 +97,13 @@
             android:singleLine="true"
             android:title="@string/set_id"
             app:iconSpaceReserved="false"/>
+        <!--<EditTextPreference
+            android:defaultValue="1"
+            android:key="Sheet tab"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/sheet_tab"
+            app:iconSpaceReserved="false"/>-->
         <Preference
             app:key="test"
             app:title="@string/upload_all"

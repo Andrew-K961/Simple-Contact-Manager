@@ -24,16 +24,20 @@ public class NetworkingThreads {
     protected static final String APPLICATION_NAME = "Inventory App";
     protected static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
     protected static final List<String> SCOPES = Collections.singletonList(SheetsScopes.SPREADSHEETS);
-    protected static String spreadsheetId = "1AIpscPTqbnn5ZMLDmIoJdD8DEBbBst2yxXp0e3u8Z7M";
+    protected static String spreadsheetId = "bruh";
     protected static NetHttpTransport HTTP_TRANSPORT;
     protected static DBHelper database;
     protected static AssetManager assets;
     protected static Sheets service;
+    /*protected static String sheetTab = "Sheet1!";
+    protected static int tabs = 1;*/
 
     public static void setVariables (AssetManager a, DBHelper db, String id){
         assets = a;
         database = db;
         spreadsheetId = id;
+        //sheetTab = "Sheet" + tab + "!";
+        //tabs = Integer.parseInt(tab);
     }
 
     protected static class Setup extends NotifyingThread {
@@ -72,8 +76,16 @@ public class NetworkingThreads {
         @Override
         public void doRun() {
             try {
-                ValueRange values = service.spreadsheets().values().get(spreadsheetId, "A2:G").execute();
-                database.ReplaceAllItems(values.getValues());
+                ValueRange values = service.spreadsheets().values().get(spreadsheetId, "A2:H").execute();
+                List<List<Object>> list = values.getValues();
+                database.ReplaceAllItems(list);
+               /* List<Object> list2 = new ArrayList<>();
+
+                for (int i = 0; i < list.size(); i++){
+                    list2.add(list.get(i).get(4));
+                }
+*/
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -86,7 +98,7 @@ public class NetworkingThreads {
         @Override
         public void doRun() {
             try {
-                service.spreadsheets().values().append(spreadsheetId, "A2:G", new ValueRange().setValues(list))
+                service.spreadsheets().values().append(spreadsheetId, "A2:H", new ValueRange().setValues(list))
                         .setValueInputOption("RAW").execute();
             } catch (Exception e){
                 e.printStackTrace();
@@ -143,7 +155,7 @@ public class NetworkingThreads {
                 }
                 row += 2;
                 ValueRange updated = new ValueRange().setValues(database.getRowForUpload(id));
-                service.spreadsheets().values().update(spreadsheetId, "B"+row+":G"+row, updated).setValueInputOption("RAW").execute();
+                service.spreadsheets().values().update(spreadsheetId, "B"+row+":H"+row, updated).setValueInputOption("RAW").execute();
             } catch (Exception e){
                 e.printStackTrace();
             }

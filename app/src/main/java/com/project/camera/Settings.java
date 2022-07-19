@@ -39,22 +39,36 @@ public class Settings extends AppCompatActivity {
             Preference upload = findPreference("test");
             Preference enableSheets = findPreference("Enable Sheets");
             Preference setId = findPreference("Sheet Id");
+            Preference typeButton = findPreference("edit types");
 
             assert locationButton != null;
             assert upload != null;
             assert enableSheets != null;
             assert setId != null;
+            assert typeButton != null;
 
-            if (settings.getBoolean("Enable Sheets", false)){
-                upload.setEnabled(true);
-                setId.setEnabled(true);
-            } else {
+            if (settings.getString("app_mode", "mode2").equals("mode1")){
+                enableSheets.setEnabled(false);
                 upload.setEnabled(false);
                 setId.setEnabled(false);
+            } else {
+                if (settings.getBoolean("Enable Sheets", false)){
+                    upload.setEnabled(true);
+                    setId.setEnabled(true);
+                } else {
+                    upload.setEnabled(false);
+                    setId.setEnabled(false);
+                }
             }
 
             locationButton.setOnPreferenceClickListener(v -> {
                 Intent intent = new Intent(getActivity(), LocationsEditor.class);
+                startActivity(intent);
+                return false;
+            });
+
+            typeButton.setOnPreferenceClickListener(v -> {
+                Intent intent = new Intent(getActivity(), TypesEditor.class);
                 startActivity(intent);
                 return false;
             });

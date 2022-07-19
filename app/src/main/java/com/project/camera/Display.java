@@ -38,7 +38,9 @@ public class Display extends AppCompatActivity {
     private ImageView picture;
     private TextView TV_quantity;
     private TextView textViewLocation;
+    private TextView textViewType;
     private String rawLocation;
+    private String rawType;
     private int quantityInt;
     private int imageQuality;
 
@@ -136,6 +138,7 @@ public class Display extends AppCompatActivity {
         picture = findViewById(R.id.itemPicture);
         TV_quantity = findViewById(R.id.quantityDisplay);
         textViewLocation = findViewById(R.id.locationText);
+        textViewType = findViewById(R.id.type_display);
 
         Cursor item = mydb.getItemRow(id);
         item.moveToFirst();
@@ -147,6 +150,8 @@ public class Display extends AppCompatActivity {
         String crypto_id = getString(R.string.id2, item.getString(1));
         String quantity = getString(R.string.quantity_display, String.valueOf(quantityInt));
 
+        rawLocation = mydb.getLocation(item.getInt(6));
+        rawType = item.getString(7);
         rawName = item.getString(2);
         rawDesc = item.getString(3);
 
@@ -166,9 +171,12 @@ public class Display extends AppCompatActivity {
         if (item.getInt(6) == -1){
             textViewLocation.setVisibility(View.GONE);
         } else {
-            rawLocation = mydb.getLocation(item.getInt(6));
-            String location = getString(R.string.location_display, mydb.getLocation(item.getInt(6)));
-            textViewLocation.setText(location);
+            textViewLocation.setText(getString(R.string.location_display, rawLocation));
+        }
+        if (Objects.equals(item.getString(7), "-1") || item.getString(7) == null){
+            textViewType.setVisibility(View.INVISIBLE);
+        } else {
+            textViewType.setText(getString(R.string.type_display, rawType));
         }
 
         imagePath = item.getString(4);
@@ -260,6 +268,7 @@ public class Display extends AppCompatActivity {
             data.putString("Desc", rawDesc);
             data.putInt("Quantity", quantityInt);
             data.putString("Location", rawLocation);
+            data.putString("Type", rawType);
         }
         intent.putExtras(data);
         startActivity(intent);
@@ -329,6 +338,15 @@ public class Display extends AppCompatActivity {
             } else {
                 textViewLocation.setText(getString(R.string.location_display, rawLocation));
                 textViewLocation.setVisibility(View.VISIBLE);
+            }
+        }
+        if (mode.equals("mode2") && !Objects.equals(updated.getString(7), rawType)){
+            rawType = updated.getString(7);
+            if (rawType.equals("-1") || rawType.equals("")){
+                textViewType.setVisibility(View.INVISIBLE);
+            } else {
+                textViewType.setText(getString(R.string.type_display, rawType));
+                textViewType.setVisibility(View.VISIBLE);
             }
         }
         updated.close();
