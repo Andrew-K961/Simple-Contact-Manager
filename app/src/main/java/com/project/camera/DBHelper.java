@@ -40,7 +40,29 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS items");
         db.execSQL("DROP TABLE IF EXISTS locations");
         db.execSQL("DROP TABLE IF EXISTS types");
-        onCreate(db);
+    }
+
+    @Override
+    public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion){
+        System.out.println("WARNING: DB downgraded");
+    }
+
+    public void initTables() {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        db.execSQL(
+                "create table if not exists people " +
+                        "(id integer primary key, cryptographic_id int, name varchar(32)," +
+                        " phone varchar(20), imagePath string)"
+        );
+        db.execSQL(
+                "create table if not exists items " +
+                        "(id integer primary key, cryptographic_id int, name varchar(100)," +
+                        " description varchar(402), imagePath string, quantity integer, location int, type string)"
+        );
+        db.execSQL("create table if not exists locations (id integer primary key, location string)");
+        db.execSQL("create table if not exists types (id integer primary key, type string)");
+        db.close();
     }
 
 //************ People
@@ -197,7 +219,8 @@ public class DBHelper extends SQLiteOpenHelper {
             } else {
                 loc = "-1";
             }
-            Item item = new Item(result.getInt(0), result.getString(1), result.getInt(2), loc, result.getString(4));
+            Item item = new Item(result.getInt(0), result.getString(1), result.getInt(2),
+                    loc, result.getString(4));
             array_list.add(item);
             result.moveToNext();
         }
@@ -256,6 +279,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 ContentValues insert = new ContentValues();
                 insert.put("location", location);
                 db.insert("locations", null, insert);
+                values.put("location", getIdFromLocation(location));
             }
 
             if (type.equals("")){
@@ -485,7 +509,6 @@ public class DBHelper extends SQLiteOpenHelper {
         if (id == -1){
             return "";
         }
-
         Cursor cursor = db.rawQuery("select location from locations where id = ?", new String[] { String.valueOf(id) });
         cursor.moveToFirst();
         String result = cursor.getString(0);
@@ -513,11 +536,12 @@ public class DBHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    public void updateType (int id, String location){
+    public void updateType (int id, String type, String oldType){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put("type", location);
-        db.update("type", values, "id = ?", new String[] { String.valueOf(id) });
+        values.put("type", type);
+        db.update("types", values, "id = ?", new String[] { String.valueOf(id) });
+        db.execSQL("update items set type=? where type=?", new Object[] { type, oldType });
         db.close();
     }
 

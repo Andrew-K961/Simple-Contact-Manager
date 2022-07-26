@@ -165,4 +165,70 @@ public class NetworkingThreads {
             this.id = id;
         }
     }
+
+    protected static class UpdateTypes extends NotifyingThread {
+        private final String newType;
+        private final String oldType;
+
+        @Override
+        public void doRun() {
+            try {
+                ValueRange values = service.spreadsheets().values().get(spreadsheetId, "F2:F").execute();
+                List<List<Object>> list = values.getValues();
+
+                for (int i = 0; i < list.size(); i++){
+                    if (list.get(i).isEmpty()){
+                        continue;
+                    }
+                    if (list.get(i).get(0).equals(oldType)){
+                        list.get(i).clear();
+                        list.get(i).add(newType);
+                    }
+                }
+
+                values = new ValueRange().setValues(list);
+                service.spreadsheets().values().update(spreadsheetId, "F2:F", values).setValueInputOption("RAW").execute();
+            } catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+
+        UpdateTypes (String newT, String oldT){
+            newType = newT;
+            oldType = oldT;
+        }
+    }
+
+    protected static class UpdateLocations extends NotifyingThread {
+        private final String newLocation;
+        private final String oldLocation;
+
+        @Override
+        public void doRun() {
+            try {
+                ValueRange values = service.spreadsheets().values().get(spreadsheetId, "E2:E").execute();
+                List<List<Object>> list = values.getValues();
+
+                for (int i = 0; i < list.size(); i++){
+                    if (list.get(i).isEmpty()){
+                        continue;
+                    }
+                    if (list.get(i).get(0).equals(oldLocation)){
+                        list.get(i).clear();
+                        list.get(i).add(newLocation);
+                    }
+                }
+
+                values = new ValueRange().setValues(list);
+                service.spreadsheets().values().update(spreadsheetId, "E2:E", values).setValueInputOption("RAW").execute();
+            } catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+
+        UpdateLocations (String newL, String oldL) {
+            newLocation = newL;
+            oldLocation = oldL;
+        }
+    }
 }

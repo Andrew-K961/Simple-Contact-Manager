@@ -55,7 +55,9 @@ public class TypesEditor extends AppCompatActivity {
 
 // Set up the buttons
         builder.setPositiveButton(getText(R.string.add), (dialog, which) -> {
-            database.insertType(input.getText().toString());
+            String type = input.getText().toString();
+            type = type.trim();
+            database.insertType(type);
             input.clearFocus();
             typeList.clear();
             typeList.addAll(database.getTypes());

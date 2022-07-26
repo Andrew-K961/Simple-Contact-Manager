@@ -100,13 +100,17 @@ public class CustomAdapter extends BaseAdapter implements ListAdapter {
 
         builder.setPositiveButton(context.getText(R.string.confirm), (dialog, which) -> {
             if (locationMode){
+                NotifyingThread update = new NetworkingThreads.UpdateLocations(input.getText().toString(), list.get(position).getName());
+                update.start();
                 database.updateLocation(id, input.getText().toString());
                 input.clearFocus();
                 dialog.cancel();
                 list.clear();
                 list.addAll(database.getAllLocations());
             } else {
-                database.updateType(id, input.getText().toString());
+                NotifyingThread update = new NetworkingThreads.UpdateTypes(input.getText().toString(), list.get(position).getName());
+                update.start();
+                database.updateType(id, input.getText().toString(), list.get(position).getName());
                 input.clearFocus();
                 dialog.cancel();
                 list.clear();

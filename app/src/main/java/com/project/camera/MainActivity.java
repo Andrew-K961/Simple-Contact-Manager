@@ -56,6 +56,7 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
                 getString(R.string.location_colon), getString(R.string.type_colon));
 
         database = new DBHelper(getApplicationContext());
+        database.initTables();
         ListView listView = findViewById(R.id.listView);
 
         if (mode.equals("mode2") && settings.getBoolean("Enable Sheets", false)) {

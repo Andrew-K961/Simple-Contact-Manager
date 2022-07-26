@@ -55,7 +55,9 @@ public class LocationsEditor extends AppCompatActivity {
 
 // Set up the buttons
         builder.setPositiveButton(getText(R.string.add), (dialog, which) -> {
-            database.insertLocation(input.getText().toString());
+            String location = input.getText().toString();
+            location = location.trim();
+            database.insertLocation(location);
             input.clearFocus();
             locationList.clear();
             locationList.addAll(database.getAllLocations());
