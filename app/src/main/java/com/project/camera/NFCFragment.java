@@ -25,7 +25,7 @@ public class NFCFragment extends BottomSheetDialogFragment {
         Button writeButton = v.findViewById(R.id.write);
 
         readButton.setOnClickListener(v12 -> {
-            Intent intent = new Intent(requireActivity().getApplicationContext(), NFC.class);
+            Intent intent = new Intent(requireActivity().getApplicationContext(), NFCActivity.class);
             intent.putExtra("Mode", 0);
             startActivity(intent);
         });

@@ -40,7 +40,7 @@ public class ContactChooser extends AppCompatActivity {
             list.setOnItemClickListener((arg0, arg1, arg2, arg3) -> {
                 Person person = arrayAdapter.getItem(arg2);
                 int id = db.getCryptoId(person.getId(), false);
-                Intent intent = new Intent(getApplicationContext(),NFC.class);
+                Intent intent = new Intent(getApplicationContext(), NFCActivity.class);
 
                 intent.putExtra("Id", id);
                 intent.putExtra("Mode", 1);
@@ -60,7 +60,7 @@ public class ContactChooser extends AppCompatActivity {
             list.setOnItemClickListener((arg0, arg1, arg2, arg3) -> {
                 Item item = itemArrayAdapter.getItem(arg2);
                 int id = db.getCryptoId(item.getId(), true);
-                Intent intent = new Intent(getApplicationContext(),NFC.class);
+                Intent intent = new Intent(getApplicationContext(), NFCActivity.class);
 
                 intent.putExtra("Id", id);
                 intent.putExtra("Mode", 1);

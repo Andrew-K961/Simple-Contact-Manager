@@ -20,11 +20,13 @@ public class CustomAdapter extends BaseAdapter implements ListAdapter {
     private ArrayList<Item> list;
     private final Context context;
     private static DBHelper database;
+    private final boolean locationMode;
 
-    public CustomAdapter(ArrayList<Item> list, Context context) {
+    public CustomAdapter(ArrayList<Item> list, Context context, boolean locMode) {
         this.list = list;
         this.context = context;
         database = new DBHelper(context);
+        locationMode = locMode;
     }
 
     @Override
@@ -64,13 +66,24 @@ public class CustomAdapter extends BaseAdapter implements ListAdapter {
         });
 
         delete.setOnClickListener(v -> {
-            if (!database.checkLocationInUse(list.get(position).getId())){
-                database.deleteLocation(list.get(position).getId());
-                list.clear();
-                list.addAll(database.getAllLocations());
-                notifyDataSetChanged();
+            if (locationMode){
+                if (!database.checkLocationInUse(list.get(position).getId())){
+                    database.deleteLocation(list.get(position).getId());
+                    list.clear();
+                    list.addAll(database.getAllLocations());
+                    notifyDataSetChanged();
+                } else {
+                    Toast.makeText(context, R.string.location_error, Toast.LENGTH_LONG).show();
+                }
             } else {
-                Toast.makeText(context, R.string.location_error, Toast.LENGTH_LONG).show();
+                if (!database.checkTypeInUse(list.get(position).getName())){
+                    database.deleteType(list.get(position).getId());
+                    list.clear();
+                    list.addAll(database.getTypes());
+                    notifyDataSetChanged();
+                } else {
+                    Toast.makeText(context, R.string.type_error, Toast.LENGTH_LONG).show();
+                }
             }
         });
 
@@ -86,11 +99,23 @@ public class CustomAdapter extends BaseAdapter implements ListAdapter {
         builder.setView(input);
 
         builder.setPositiveButton(context.getText(R.string.confirm), (dialog, which) -> {
-            database.updateLocation(id, input.getText().toString());
-            input.clearFocus();
-            dialog.cancel();
-            list.clear();
-            list.addAll(database.getAllLocations());
+            if (locationMode){
+                NotifyingThread update = new NetworkingThreads.UpdateLocations(input.getText().toString(), list.get(position).getName());
+                update.start();
+                database.updateLocation(id, input.getText().toString());
+                input.clearFocus();
+                dialog.cancel();
+                list.clear();
+                list.addAll(database.getAllLocations());
+            } else {
+                NotifyingThread update = new NetworkingThreads.UpdateTypes(input.getText().toString(), list.get(position).getName());
+                update.start();
+                database.updateType(id, input.getText().toString(), list.get(position).getName());
+                input.clearFocus();
+                dialog.cancel();
+                list.clear();
+                list.addAll(database.getTypes());
+            }
             notifyDataSetChanged();
         });
         builder.setNegativeButton(context.getText(R.string.cancel), (dialog, which) -> {

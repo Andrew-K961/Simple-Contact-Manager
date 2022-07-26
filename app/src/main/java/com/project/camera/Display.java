@@ -1,6 +1,5 @@
 package com.project.camera;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -39,7 +38,9 @@ public class Display extends AppCompatActivity {
     private ImageView picture;
     private TextView TV_quantity;
     private TextView textViewLocation;
+    private TextView textViewType;
     private String rawLocation;
+    private String rawType;
     private int quantityInt;
     private int imageQuality;
 
@@ -137,6 +138,7 @@ public class Display extends AppCompatActivity {
         picture = findViewById(R.id.itemPicture);
         TV_quantity = findViewById(R.id.quantityDisplay);
         textViewLocation = findViewById(R.id.locationText);
+        textViewType = findViewById(R.id.type_display);
 
         Cursor item = mydb.getItemRow(id);
         item.moveToFirst();
@@ -148,6 +150,8 @@ public class Display extends AppCompatActivity {
         String crypto_id = getString(R.string.id2, item.getString(1));
         String quantity = getString(R.string.quantity_display, String.valueOf(quantityInt));
 
+        rawLocation = mydb.getLocation(item.getInt(6));
+        rawType = item.getString(7);
         rawName = item.getString(2);
         rawDesc = item.getString(3);
 
@@ -167,14 +171,17 @@ public class Display extends AppCompatActivity {
         if (item.getInt(6) == -1){
             textViewLocation.setVisibility(View.GONE);
         } else {
-            rawLocation = mydb.getLocation(item.getInt(6));
-            String location = getString(R.string.location_display, mydb.getLocation(item.getInt(6)));
-            textViewLocation.setText(location);
+            textViewLocation.setText(getString(R.string.location_display, rawLocation));
+        }
+        if (Objects.equals(item.getString(7), "-1") || item.getString(7) == null){
+            textViewType.setVisibility(View.INVISIBLE);
+        } else {
+            textViewType.setText(getString(R.string.type_display, rawType));
         }
 
         imagePath = item.getString(4);
         item.close();
-        if (Objects.equals(imagePath, "")){
+        if (Objects.equals(imagePath, "") || imagePath == null){
             picture.setVisibility(View.GONE);
             textViewDesc.setMaxLines(15);
             return;
@@ -221,21 +228,25 @@ public class Display extends AppCompatActivity {
     }
 
     public void delete(View view) {
+        if (settings.getBoolean("Enable Sheets", false)){
+            NotifyingThread delete = new NetworkingThreads.DeleteRow(id);
+            delete.start();
+        }
+
         if (mode.equals("mode1")){
             mydb.deletePerson(id);
         } else {
             mydb.deleteItem(id);
         }
         File picture = new File(imagePath);
-        Context context = getApplicationContext();
         int duration = Toast.LENGTH_SHORT;
-        if(picture.delete()){
+        if(picture.delete() || imagePath.equals("")){
             CharSequence text = getResources().getString(R.string.delete_success);
-            Toast toast = Toast.makeText(context, text, duration);
+            Toast toast = Toast.makeText(this, text, duration);
             toast.show();
         } else if (picture.exists()){
             CharSequence text = getResources().getString(R.string.delete_fail);
-            Toast toast = Toast.makeText(context, text, duration);
+            Toast toast = Toast.makeText(this, text, duration);
             toast.show();
         }
         finish();
@@ -257,6 +268,7 @@ public class Display extends AppCompatActivity {
             data.putString("Desc", rawDesc);
             data.putInt("Quantity", quantityInt);
             data.putString("Location", rawLocation);
+            data.putString("Type", rawType);
         }
         intent.putExtras(data);
         startActivity(intent);
@@ -317,6 +329,24 @@ public class Display extends AppCompatActivity {
                 TV_quantity.setVisibility(View.VISIBLE);
             } else{
                 TV_quantity.setVisibility(View.GONE);
+            }
+        }
+        if (mode.equals("mode2") && !Objects.equals(mydb.getLocation(updated.getInt(6)), rawLocation)){
+            rawLocation = mydb.getLocation(updated.getInt(6));
+            if (rawLocation.equals("-1") || rawLocation.equals("")){
+                textViewLocation.setVisibility(View.GONE);
+            } else {
+                textViewLocation.setText(getString(R.string.location_display, rawLocation));
+                textViewLocation.setVisibility(View.VISIBLE);
+            }
+        }
+        if (mode.equals("mode2") && !Objects.equals(updated.getString(7), rawType)){
+            rawType = updated.getString(7);
+            if (rawType.equals("-1") || rawType.equals("")){
+                textViewType.setVisibility(View.INVISIBLE);
+            } else {
+                textViewType.setText(getString(R.string.type_display, rawType));
+                textViewType.setVisibility(View.VISIBLE);
             }
         }
         updated.close();

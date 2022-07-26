@@ -8,5 +8,7 @@
     <string-array name="sort_array2">
         <item>@string/recents</item>
         <item>@string/hint1</item>
+        <item>@string/location</item>
+        <item>@string/type</item>
     </string-array>
 </resources>

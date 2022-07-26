@@ -15,7 +15,6 @@
     <string name="name">Name: %1$s</string>
     <string name="phone">Phone: %1$s</string>
     <string name="search">Search</string>
-    <string name="nfc_search">NFC Search</string>
     <string name="nfc" translatable="false">NFC</string>
     <string name="update">Update</string>
     <string name="sort">Sort by:</string>
@@ -29,7 +28,6 @@
     <string name="phone_warning">Phone number must be 10 digits</string>
     <string name="phone_warning2">Please enter valid phone number</string>
     <string name="input_warning">Please enter a valid name and/or phone number</string>
-    <string name="image_warning">Please capture an image</string>
     <string name="add_success">Successfully added contact</string>
     <string name="edit_success">Successfully updated contact</string>
     <string name="delete_success">Successfully Deleted</string>
@@ -65,7 +63,6 @@
     <string name="hint3">Description</string>
     <string name="input_warning2">Please enter a valid name and/or description</string>
     <string name="add_success2">Successfully Added Item</string>
-    <string name="desc_warning">Description must be longer</string>
     <string name="desc_warning2">Description must be shorter</string>
     <string name="edit_success2">Successfully updated item</string>
     <string name="desc">Description</string>
@@ -92,6 +89,23 @@
     <string name="location_display">Location: %1$s</string>
     <string name="location_error">Cannot Delete: Location is in Use</string>
     <string name="show_location">Show Location on Home Page</string>
-    <string name="quantity_colon">Quantity: </string>
-    <string name="location_colon">Location: </string>
+    <string name="quantity_colon">Quantity:&#160;</string>
+    <string name="location_colon">Location:&#160;</string>
+    <string name="sheets_database">Google Sheets Database</string>
+    <string name="upload_all">Upload All to Sheets</string>
+    <string name="set_id">Set Sheet ID</string>
+    <string name="enable_sheets">Enable Sheets Database</string>
+    <string name="sheets_error1">Google Sheet Id not set</string>
+    <string name="sync">Sync</string>
+    <string name="syncing">Syncing items from cloud…</string>
+    <string name="sync_complete">Sync Complete</string>
+    <string name="enable_type">Enable Type</string>
+    <string name="type_default">Enable Item Type by Default</string>
+    <string name="show_type">Show Item Type on Home Page</string>
+    <string name="edit_types">Manage Item Types</string>
+    <string name="add_type">Add Item Type</string>
+    <string name="type_display">Type: %1$s</string>
+    <string name="type">Type</string>
+    <string name="type_colon">Type:&#160;</string>
+    <string name="type_error">Cannot Delete: Type is in Use</string>
 </resources>
