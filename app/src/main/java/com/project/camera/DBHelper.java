@@ -290,6 +290,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 ContentValues insert = new ContentValues();
                 insert.put("type", type);
                 db.insert("types", null, insert);
+                values.put("types", getIdFromLocation(type));
             }
 
             values.put("id", Integer.parseInt(newList.get(i).get(0).toString()));

@@ -120,6 +120,7 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
                     R.array.sort_array1, android.R.layout.simple_spinner_item);
 
             personArrayList = database.getAllPeople();
+            Objects.requireNonNull(getSupportActionBar()).setTitle(R.string.contact_mngr);
             personArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, personArrayList);
             listView.setAdapter(personArrayAdapter);
         }
