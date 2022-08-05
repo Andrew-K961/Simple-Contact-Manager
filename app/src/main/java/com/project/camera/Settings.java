@@ -1,11 +1,15 @@
 package com.project.camera;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.InputType;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
@@ -88,13 +92,35 @@ public class Settings extends AppCompatActivity {
                 if (settings.getString("Sheet Id", "").equals("")){
                     Toast.makeText(getContext(), R.string.sheets_error1, Toast.LENGTH_LONG).show();
                 } else {
-                    NetworkingThreads.setVariables(getActivity().getAssets(),
-                            new DBHelper(getContext()), settings.getString("Sheet Id", ""));
+                    Context context = getActivity();
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                    builder.setTitle(context.getText(R.string.upload_confirm));
 
-                    NotifyingThread setup = new NetworkingThreads.Setup();
-                    setup.setName("Setup");
-                    setup.addListener(this);
-                    setup.start();
+                    final EditText input = new EditText(context);
+                    input.setInputType(InputType.TYPE_CLASS_TEXT);
+                    builder.setView(input);
+
+                    builder.setPositiveButton(context.getText(R.string.yes), (dialog, which) -> {
+                        if (input.getText().toString().contentEquals(context.getText(R.string.confirm))){
+                            NetworkingThreads.setVariables(getActivity().getAssets(),
+                                    new DBHelper(getContext()), settings.getString("Sheet Id", ""));
+
+                            NotifyingThread setup = new NetworkingThreads.Setup();
+                            setup.setName("Setup");
+                            setup.addListener(this);
+                            setup.start();
+                        } else {
+                            dialog.cancel();
+                            Toast.makeText(context, R.string.no, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+                    builder.setNegativeButton(context.getText(R.string.no), (dialog, which) -> {
+                        dialog.cancel();
+                        input.clearFocus();
+                    });
+
+                    builder.show();
                 }
                 return false;
             });
